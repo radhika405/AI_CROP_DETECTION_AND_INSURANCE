@@ -1,0 +1,2390 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>🌾 FasalBima – AI Crop Insurance</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    /* ── RESET & BASE ──────────────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: 'Noto Sans', 'Noto Sans Devanagari', sans-serif;
+      background: #0f3d1a;
+      overflow: hidden;
+      color: #1a2e1a
+    }
+
+    /* ── SCREEN SYSTEM ─────────────────────────────────────── */
+    .screen {
+      display: none;
+      position: fixed;
+      inset: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: #f0f7f0;
+      animation: slideUp .35s cubic-bezier(.4, 0, .2, 1)
+    }
+
+    .screen.active {
+      display: block
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    /* ── LANGUAGE SCREEN ───────────────────────────────────── */
+    #screen-language {
+      background: linear-gradient(160deg, #0a2e0f 0%, #1b5e20 40%, #2e7d32 70%, #1565c0 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0 0 40px;
+    }
+
+    .lang-hero {
+      width: 100%;
+      text-align: center;
+      padding: 48px 24px 32px;
+      background: rgba(0, 0, 0, 0.15);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .lang-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(255, 215, 0, 0.15) 0%, transparent 70%);
+    }
+
+    .wheat-emoji {
+      font-size: 3.5rem;
+      display: block;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 4px 12px rgba(255, 215, 0, 0.4));
+      animation: float 3s ease-in-out infinite
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0)
+      }
+
+      50% {
+        transform: translateY(-8px)
+      }
+    }
+
+    .app-title {
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -.5px;
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+      line-height: 1
+    }
+
+    .app-sub {
+      color: rgba(255, 255, 255, .75);
+      font-size: 1rem;
+      margin-top: 8px;
+      font-weight: 500;
+      letter-spacing: .5px
+    }
+
+    .pmfby-badge {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 6px 16px;
+      background: rgba(255, 215, 0, 0.2);
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      border-radius: 50px;
+      color: #FFD700;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .lang-card {
+      width: calc(100% - 32px);
+      max-width: 460px;
+      margin: 24px auto 0;
+      background: rgba(255, 255, 255, 0.97);
+      border-radius: 24px;
+      padding: 28px 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .lang-prompt {
+      text-align: center;
+      font-size: .95rem;
+      font-weight: 700;
+      color: #2e7d32;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e8f5e9
+    }
+
+    .lang-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px
+    }
+
+    .lang-opt {
+      background: #f1f8e9;
+      border: 2px solid transparent;
+      border-radius: 14px;
+      padding: 14px 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .22s cubic-bezier(.4, 0, .2, 1);
+      outline: none;
+    }
+
+    .lang-opt:hover {
+      border-color: #4caf50;
+      background: #e8f5e9;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(46, 125, 50, 0.18)
+    }
+
+    .lang-opt.sel {
+      border-color: #2e7d32;
+      background: #c8e6c9;
+      box-shadow: 0 6px 20px rgba(46, 125, 50, 0.25)
+    }
+
+    .lf {
+      font-size: 1.8rem;
+      display: block;
+      margin-bottom: 5px
+    }
+
+    .ln {
+      font-size: .82rem;
+      font-weight: 700;
+      color: #1b2e1b
+    }
+
+    .lsub {
+      font-size: .7rem;
+      color: #5d7451;
+      margin-top: 2px
+    }
+
+    .lang-enter-btn {
+      display: block;
+      width: 100%;
+      margin-top: 20px;
+      padding: 16px;
+      background: linear-gradient(135deg, #2e7d32, #43a047);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+      transition: all .2s;
+      font-family: inherit;
+    }
+
+    .lang-enter-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(46, 125, 50, 0.5)
+    }
+
+    /* ── TOP BAR ───────────────────────────────────────────── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 60%, #388e3c 100%);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .topbar-left {
+      display: flex;
+      flex-direction: column;
+      gap: 3px
+    }
+
+    .greeting {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff
+    }
+
+    .location {
+      font-size: .75rem;
+      color: rgba(255, 255, 255, .8);
+      display: flex;
+      align-items: center;
+      gap: 4px
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .lang-pill {
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #fff;
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: .82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s;
+    }
+
+    .lang-pill:hover {
+      background: rgba(255, 255, 255, 0.3)
+    }
+
+    .avatar-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffd740, #ff8f00);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: .95rem;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* ── WEATHER CARD ──────────────────────────────────────── */
+    .weather-card {
+      margin: 16px;
+      border-radius: 20px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0277bd, #0288d1, #039be5);
+      box-shadow: 0 8px 32px rgba(2, 119, 189, 0.35);
+    }
+
+    .weather-inner {
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .weather-icon-big {
+      font-size: 2.4rem;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2))
+    }
+
+    .weather-details {
+      flex: 1
+    }
+
+    .w-temp {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1
+    }
+
+    .w-desc {
+      font-size: .8rem;
+      color: rgba(255, 255, 255, .85);
+      margin-top: 2px
+    }
+
+    .weather-alert-pill {
+      background: rgba(255, 152, 0, 0.25);
+      border: 1px solid rgba(255, 152, 0, 0.5);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: .75rem;
+      font-weight: 600;
+      color: #fff;
+      text-align: center;
+      max-width: 130px;
+      line-height: 1.3;
+    }
+
+    .ndvi-strip {
+      background: rgba(0, 0, 0, 0.15);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .ndvi-val {
+      font-size: .8rem;
+      color: rgba(255, 255, 255, .9);
+      font-weight: 600
+    }
+
+    .ndvi-bar {
+      flex: 1;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+      overflow: hidden
+    }
+
+    .ndvi-fill {
+      height: 100%;
+      width: 72%;
+      background: linear-gradient(90deg, #69f0ae, #00e676);
+      border-radius: 3px
+    }
+
+    /* ── SECTION HEADING ───────────────────────────────────── */
+    .sec-head {
+      padding: 16px 18px 10px;
+      font-size: .78rem;
+      font-weight: 700;
+      color: #5d7451;
+      text-transform: uppercase;
+      letter-spacing: .8px
+    }
+
+    /* ── MENU GRID ─────────────────────────────────────────── */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding: 0 16px
+    }
+
+    .menu-card {
+      background: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 20px 10px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      transition: all .22s cubic-bezier(.4, 0, .2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .menu-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(46, 125, 50, 0.05), transparent);
+      opacity: 0;
+      transition: opacity .2s;
+    }
+
+    .menu-card:hover::before {
+      opacity: 1
+    }
+
+    .menu-card:hover {
+      transform: translateY(-5px) scale(1.03);
+      box-shadow: 0 12px 32px rgba(46, 125, 50, 0.18)
+    }
+
+    .menu-card:active {
+      transform: scale(.97)
+    }
+
+    .m-icon-wrap {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .ic-red {
+      background: linear-gradient(135deg, #ff6b6b, #e53935)
+    }
+
+    .ic-blue {
+      background: linear-gradient(135deg, #42a5f5, #1565c0)
+    }
+
+    .ic-green {
+      background: linear-gradient(135deg, #66bb6a, #2e7d32)
+    }
+
+    .ic-amber {
+      background: linear-gradient(135deg, #ffca28, #e65100)
+    }
+
+    .ic-teal {
+      background: linear-gradient(135deg, #26c6da, #00838f)
+    }
+
+    .ic-purple {
+      background: linear-gradient(135deg, #ab47bc, #4a148c)
+    }
+
+    .m-title {
+      font-size: .8rem;
+      font-weight: 700;
+      color: #1b2e1b;
+      text-align: center;
+      line-height: 1.3
+    }
+
+    .m-sub {
+      font-size: .68rem;
+      color: #80a07d;
+      text-align: center
+    }
+
+    /* ── SCHEME BANNER ─────────────────────────────────────── */
+    .scheme-banner {
+      margin: 16px;
+      border-radius: 18px;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, #bf360c, #e64a19, #ff7043);
+      box-shadow: 0 8px 24px rgba(230, 74, 25, 0.35);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .scheme-icon {
+      font-size: 2rem;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.2))
+    }
+
+    .scheme-info {
+      flex: 1
+    }
+
+    .scheme-tag {
+      font-size: .72rem;
+      color: rgba(255, 255, 255, .8);
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase
+    }
+
+    .scheme-desc {
+      font-size: .95rem;
+      font-weight: 700;
+      color: #fff;
+      margin-top: 2px
+    }
+
+    .scheme-arrow {
+      color: rgba(255, 255, 255, .7);
+      font-size: 1.2rem
+    }
+
+    /* ── PAGE HEADER ───────────────────────────────────────── */
+    .page-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: linear-gradient(135deg, #1b5e20, #2e7d32, #388e3c);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .back-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .2s;
+      flex-shrink: 0;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.3)
+    }
+
+    .page-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff
+    }
+
+    /* ── STEP PROGRESS ─────────────────────────────────────── */
+    .step-progress {
+      padding: 20px 20px 8px;
+      display: flex;
+      align-items: center
+    }
+
+    .sp-dot {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #dcedc8;
+      color: #9ccc65;
+      font-weight: 700;
+      font-size: .88rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all .3s;
+    }
+
+    .sp-dot.active {
+      background: linear-gradient(135deg, #2e7d32, #43a047);
+      color: #fff;
+      box-shadow: 0 0 0 5px rgba(46, 125, 50, 0.15)
+    }
+
+    .sp-dot.done {
+      background: linear-gradient(135deg, #66bb6a, #43a047);
+      color: #fff
+    }
+
+    .sp-line {
+      flex: 1;
+      height: 3px;
+      background: #dcedc8;
+      border-radius: 2px
+    }
+
+    /* ── REPORT STEPS ──────────────────────────────────────── */
+    .rstep {
+      display: none;
+      padding: 16px 16px 24px;
+      animation: slideUp .3s ease
+    }
+
+    .rstep.active {
+      display: block
+    }
+
+    .rstep-head {
+      font-size: .95rem;
+      font-weight: 700;
+      color: #1b2e1b;
+      margin-bottom: 14px;
+      padding-left: 4px
+    }
+
+    .rstep-head .rh-icon {
+      margin-right: 6px
+    }
+
+    /* CROP PICK GRID */
+    .crop-pick {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 4px
+    }
+
+    .crop-btn {
+      background: #fff;
+      border: 2px solid #e8f5e9;
+      border-radius: 14px;
+      padding: 12px 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .crop-btn:hover,
+    .crop-btn.sel {
+      border-color: #4caf50;
+      background: #f1f8e9;
+      transform: scale(1.05)
+    }
+
+    .crop-btn.sel {
+      box-shadow: 0 4px 14px rgba(46, 125, 50, 0.2)
+    }
+
+    .cb-emoji {
+      font-size: 1.9rem;
+      display: block;
+      margin-bottom: 4px
+    }
+
+    .cb-name {
+      font-size: .68rem;
+      font-weight: 700;
+      color: #2e7d32
+    }
+
+    /* CAUSE GRID */
+    .cause-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 16px
+    }
+
+    .cause-btn {
+      background: #fff;
+      border: 2px solid #fff3e0;
+      border-radius: 14px;
+      padding: 14px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .cause-btn:hover,
+    .cause-btn.sel {
+      border-color: #ff9800;
+      background: #fff8e1;
+      transform: scale(1.04)
+    }
+
+    .cause-btn.sel {
+      box-shadow: 0 4px 14px rgba(255, 152, 0, 0.2)
+    }
+
+    .cau-emoji {
+      font-size: 1.6rem;
+      display: block;
+      margin-bottom: 4px
+    }
+
+    .cau-name {
+      font-size: .7rem;
+      font-weight: 700;
+      color: #e65100
+    }
+
+    /* PHOTO AREA */
+    .photo-zone {
+      border: 2px dashed #a5d6a7;
+      border-radius: 18px;
+      padding: 24px;
+      background: linear-gradient(135deg, #f1f8e9, #e8f5e9);
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .photo-upload-lbl {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #2e7d32, #43a047);
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 50px;
+      font-size: .95rem;
+      font-weight: 700;
+      box-shadow: 0 6px 20px rgba(46, 125, 50, 0.35);
+      transition: all .2s;
+    }
+
+    .photo-upload-lbl:hover {
+      transform: scale(1.04);
+      box-shadow: 0 10px 28px rgba(46, 125, 50, 0.45)
+    }
+
+    .photo-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 14px
+    }
+
+    .thumb {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 3px solid #a5d6a7;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12)
+    }
+
+    #photoFile {
+      display: none
+    }
+
+    .photo-hint {
+      font-size: .78rem;
+      color: #81c784;
+      margin-top: 10px;
+      font-weight: 500
+    }
+
+    /* VOICE */
+    .voice-zone {
+      text-align: center;
+      margin-bottom: 14px
+    }
+
+    .voice-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #1565c0, #1976d2);
+      color: #fff;
+      border: none;
+      padding: 16px 32px;
+      border-radius: 50px;
+      font-size: .95rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(21, 101, 192, 0.35);
+      transition: all .2s;
+      font-family: inherit;
+    }
+
+    .voice-btn:hover {
+      transform: scale(1.04)
+    }
+
+    .voice-btn.rec {
+      background: linear-gradient(135deg, #c62828, #d32f2f);
+      animation: pulse 1.2s infinite
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        box-shadow: 0 6px 20px rgba(198, 40, 40, 0.35)
+      }
+
+      50% {
+        box-shadow: 0 6px 30px rgba(198, 40, 40, 0.6), 0 0 0 10px rgba(198, 40, 40, 0.1)
+      }
+    }
+
+    .transcript-box {
+      min-height: 52px;
+      margin-top: 12px;
+      padding: 14px 16px;
+      background: #f3f4f6;
+      border-radius: 12px;
+      font-size: .88rem;
+      color: #6b7280;
+      font-style: italic;
+      text-align: left;
+      border: 1px solid #e5e7eb;
+    }
+
+    /* LAND FORM */
+    .form-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06)
+    }
+
+    .f-label {
+      font-size: .85rem;
+      font-weight: 700;
+      color: #2e7d32;
+      margin-bottom: 8px;
+      display: block
+    }
+
+    .f-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e8f5e9;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: inherit;
+      color: #1b2e1b;
+      outline: none;
+      transition: border .2s;
+      background: #f9fdf9;
+    }
+
+    .f-input:focus {
+      border-color: #4caf50
+    }
+
+    .area-row {
+      display: flex;
+      align-items: center;
+      gap: 14px
+    }
+
+    .area-minus,
+    .area-plus {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, #2e7d32, #43a047);
+      color: #fff;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+      transition: all .2s;
+      flex-shrink: 0;
+    }
+
+    .area-minus:hover,
+    .area-plus:hover {
+      transform: scale(1.12)
+    }
+
+    .area-num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #1b2e1b;
+      min-width: 60px;
+      text-align: center
+    }
+
+    .area-unit-lbl {
+      font-size: .9rem;
+      color: #5d7451;
+      font-weight: 600
+    }
+
+    .slider-wrap {
+      margin-top: 4px
+    }
+
+    .loss-slider {
+      width: 100%;
+      appearance: none;
+      -webkit-appearance: none;
+      height: 10px;
+      border-radius: 5px;
+      background: linear-gradient(90deg, #66bb6a, #ffa726, #ef5350);
+      outline: none;
+      cursor: pointer
+    }
+
+    .loss-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #fff;
+      border: 3px solid #2e7d32;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      cursor: pointer
+    }
+
+    .loss-big {
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #e65100;
+      margin-top: 6px
+    }
+
+    /* ── BUTTONS ───────────────────────────────────────────── */
+    .btn-primary {
+      display: block;
+      width: 100%;
+      padding: 17px;
+      background: linear-gradient(135deg, #2e7d32, #43a047);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(46, 125, 50, 0.38);
+      margin-top: 18px;
+      transition: all .22s;
+      font-family: inherit;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(46, 125, 50, 0.45)
+    }
+
+    .btn-sec {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background: #fff;
+      color: #2e7d32;
+      border: 2px solid #a5d6a7;
+      border-radius: 50px;
+      font-size: .95rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: all .2s;
+      font-family: inherit;
+    }
+
+    .btn-sec:hover {
+      background: #e8f5e9
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px
+    }
+
+    .btn-row .btn-sec {
+      margin-top: 18px
+    }
+
+    .btn-row .btn-primary {
+      margin-top: 18px
+    }
+
+    /* ── AI RESULT ─────────────────────────────────────────── */
+    .ai-card {
+      background: #fff;
+      border-radius: 20px;
+      margin: 16px;
+      padding: 28px 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      text-align: center
+    }
+
+    .spinner-wrap {
+      padding: 40px 0
+    }
+
+    .spinner {
+      width: 64px;
+      height: 64px;
+      border: 6px solid #e8f5e9;
+      border-top-color: #2e7d32;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      animation: spin .9s linear infinite
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .spin-lbl {
+      font-size: .95rem;
+      color: #5d7451;
+      font-weight: 600
+    }
+
+    .result-tick {
+      font-size: 3.5rem;
+      margin-bottom: 10px
+    }
+
+    .result-h {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #2e7d32;
+      margin-bottom: 16px
+    }
+
+    .claim-id-box {
+      background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+      border: 1px solid #a5d6a7;
+      border-radius: 14px;
+      padding: 14px 20px;
+      margin-bottom: 20px;
+    }
+
+    .claim-id-lbl {
+      font-size: .75rem;
+      font-weight: 700;
+      color: #5d7451;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      display: block;
+      margin-bottom: 4px
+    }
+
+    .claim-id-val {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #2e7d32;
+      font-family: monospace;
+      letter-spacing: 1px
+    }
+
+    .ai-assess {
+      background: #f9fafb;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+      text-align: left
+    }
+
+    .assess-head {
+      font-size: .78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: #9ccc65;
+      text-align: center;
+      margin-bottom: 14px
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-size: .82rem;
+      font-weight: 600
+    }
+
+    .bar-row-lbl {
+      width: 100px;
+      flex-shrink: 0;
+      color: #5d7451
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 11px;
+      background: #e0e0e0;
+      border-radius: 6px;
+      overflow: hidden
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 1.2s cubic-bezier(.4, 0, .2, 1)
+    }
+
+    .bf-red {
+      background: linear-gradient(90deg, #ef5350, #b71c1c)
+    }
+
+    .bf-orange {
+      background: linear-gradient(90deg, #ffa726, #e65100)
+    }
+
+    .bf-green {
+      background: linear-gradient(90deg, #66bb6a, #2e7d32)
+    }
+
+    .bar-pct {
+      width: 38px;
+      text-align: right;
+      font-weight: 700;
+      color: #1b2e1b
+    }
+
+    .sat-verified {
+      display: inline-block;
+      background: #e3f2fd;
+      border: 1px solid #90caf9;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: .8rem;
+      color: #1565c0;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .credit-note {
+      font-size: .88rem;
+      color: #5d7451;
+      margin-bottom: 20px;
+      line-height: 1.5
+    }
+
+    /* ── CLAIMS LIST ───────────────────────────────────────── */
+    .claims-wrap {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px
+    }
+
+    .claim-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: transform .2s;
+    }
+
+    .claim-card:hover {
+      transform: translateY(-2px)
+    }
+
+    .cc-icon {
+      font-size: 2.2rem;
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: #e8f5e9;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .cc-body {
+      flex: 1;
+      min-width: 0
+    }
+
+    .cc-name {
+      font-size: .9rem;
+      font-weight: 700;
+      color: #1b2e1b
+    }
+
+    .cc-date {
+      font-size: .75rem;
+      color: #80a07d;
+      margin-top: 2px
+    }
+
+    .cc-amount {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #2e7d32;
+      margin-top: 4px
+    }
+
+    .badge {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: .72rem;
+      font-weight: 700;
+      flex-shrink: 0
+    }
+
+    .b-approved {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #a5d6a7
+    }
+
+    .b-pending {
+      background: #fff8e1;
+      color: #e65100;
+      border: 1px solid #ffe082
+    }
+
+    .b-review {
+      background: #e3f2fd;
+      color: #1565c0;
+      border: 1px solid #90caf9
+    }
+
+    .claims-total {
+      background: linear-gradient(135deg, #2e7d32, #43a047);
+      border-radius: 18px;
+      padding: 18px 20px;
+      margin: 0 16px 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 6px 20px rgba(46, 125, 50, 0.3);
+    }
+
+    .ct-label {
+      font-size: .82rem;
+      color: rgba(255, 255, 255, .8);
+      font-weight: 600;
+      margin-bottom: 4px
+    }
+
+    .ct-val {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #fff
+    }
+
+    /* ── CROP REGISTRATION ─────────────────────────────────── */
+    .crop-reg-body {
+      padding: 16px
+    }
+
+    .season-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 4px
+    }
+
+    .s-btn {
+      flex: 1;
+      padding: 14px;
+      border: 2px solid #e8f5e9;
+      border-radius: 14px;
+      background: #fff;
+      font-size: .9rem;
+      font-weight: 700;
+      color: #80a07d;
+      cursor: pointer;
+      transition: all .2s;
+      font-family: inherit
+    }
+
+    .s-btn.sel {
+      border-color: #2e7d32;
+      background: #e8f5e9;
+      color: #2e7d32
+    }
+
+    /* ── ADVISORY ──────────────────────────────────────────── */
+    .adv-wrap {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px
+    }
+
+    .adv-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+      border-left: 5px solid
+    }
+
+    .adv-card.danger {
+      border-color: #e53935
+    }
+
+    .adv-card.warning {
+      border-color: #ff9800
+    }
+
+    .adv-card.info {
+      border-color: #2e7d32
+    }
+
+    .adv-card.scheme {
+      border-color: #1565c0
+    }
+
+    .adv-tag {
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 6px
+    }
+
+    .adv-title {
+      font-size: .95rem;
+      font-weight: 700;
+      color: #1b2e1b;
+      margin-bottom: 6px
+    }
+
+    .adv-desc {
+      font-size: .82rem;
+      color: #5d7451;
+      line-height: 1.55
+    }
+
+    .adv-date {
+      font-size: .72rem;
+      color: #bdbdbd;
+      margin-top: 8px
+    }
+
+    /* ── HELPLINE ──────────────────────────────────────────── */
+    .hl-wrap {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px
+    }
+
+    .hl-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 18px 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .hl-iw {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      flex-shrink: 0
+    }
+
+    .hl-iw.red {
+      background: linear-gradient(135deg, #ff6b6b, #e53935)
+    }
+
+    .hl-iw.green {
+      background: linear-gradient(135deg, #66bb6a, #2e7d32)
+    }
+
+    .hl-iw.blue {
+      background: linear-gradient(135deg, #42a5f5, #1565c0)
+    }
+
+    .hl-body {
+      flex: 1
+    }
+
+    .hl-name {
+      font-size: .88rem;
+      font-weight: 700;
+      color: #1b2e1b
+    }
+
+    .hl-num {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #2e7d32;
+      text-decoration: none;
+      display: block;
+      margin-top: 2px
+    }
+
+    .hl-hrs {
+      font-size: .72rem;
+      color: #80a07d;
+      margin-top: 2px
+    }
+
+    .call-fab {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2e7d32, #43a047);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(46, 125, 50, 0.35);
+      transition: transform .2s;
+      flex-shrink: 0;
+    }
+
+    .call-fab:hover {
+      transform: scale(1.12)
+    }
+
+    .wa-card {
+      background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+      border: 1px solid #a5d6a7;
+      border-radius: 18px;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 4px 16px rgba(46, 125, 50, 0.1);
+    }
+
+    .wa-name {
+      font-size: .9rem;
+      font-weight: 700;
+      color: #2e7d32
+    }
+
+    .wa-sub {
+      font-size: .8rem;
+      color: #5d7451;
+      margin-top: 2px
+    }
+
+    .wa-btn {
+      margin-left: auto;
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: .88rem;
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+      flex-shrink: 0;
+      transition: transform .2s;
+    }
+
+    .wa-btn:hover {
+      transform: scale(1.06)
+    }
+
+    /* ── SATELLITE ─────────────────────────────────────────── */
+    .sat-wrap {
+      padding: 16px
+    }
+
+    .sat-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px
+    }
+
+    .sat-tab {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #e8f5e9;
+      border-radius: 12px;
+      background: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: .88rem;
+      color: #80a07d;
+      transition: all .2s;
+      font-family: inherit;
+    }
+
+    .sat-tab.sel {
+      border-color: #2e7d32;
+      background: #e8f5e9;
+      color: #2e7d32
+    }
+
+    .sat-map {
+      height: 250px;
+      border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      margin-bottom: 16px;
+    }
+
+    .sat-grad {
+      position: absolute;
+      inset: 0;
+      transition: background .5s
+    }
+
+    .ndvi-grad {
+      background: radial-gradient(ellipse at 30% 65%, #1b5e20 0%, #43a047 20%, #c5e1a5 40%, #ffeb3b 60%, #ef5350 80%, #880e4f 100%)
+    }
+
+    .rgb-grad {
+      background: linear-gradient(140deg, #8bc34a 0%, #cddc39 25%, #ffeb3b 50%, #ffa000 75%, #4caf50 100%)
+    }
+
+    .sar-grad {
+      background: linear-gradient(140deg, #263238 0%, #37474f 30%, #546e7a 55%, #78909c 75%, #b0bec5 100%)
+    }
+
+    .sat-label-overlay {
+      position: absolute;
+      bottom: 14px;
+      left: 14px;
+      background: rgba(0, 0, 0, 0.65);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: .78rem;
+      font-weight: 600;
+    }
+
+    .sat-legend {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: rgba(255, 255, 255, 0.93);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: .75rem;
+      font-weight: 600;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .leg-dot {
+      font-size: 1rem;
+      margin-right: 4px
+    }
+
+    .sat-stats {
+      display: flex;
+      gap: 10px
+    }
+
+    .sstat {
+      flex: 1;
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px 10px;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07)
+    }
+
+    .sstat-num {
+      font-size: 1.7rem;
+      font-weight: 800
+    }
+
+    .sstat-lbl {
+      font-size: .72rem;
+      color: #80a07d;
+      margin-top: 4px;
+      font-weight: 600
+    }
+
+    .sn-green {
+      color: #2e7d32
+    }
+
+    .sn-amber {
+      color: #ff9800
+    }
+
+    .sn-red {
+      color: #e53935
+    }
+
+    /* ── BOTTOM NAV ────────────────────────────────────────── */
+    #bottomNav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid #e8f5e9;
+      box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+      padding: 6px 0 env(safe-area-inset-bottom, 0);
+    }
+
+    .bnav {
+      display: flex
+    }
+
+    .nav-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .nav-btn .nicn {
+      font-size: 1.4rem;
+      transition: transform .2s
+    }
+
+    .nav-btn.act .nicn {
+      transform: scale(1.15)
+    }
+
+    .nav-lbl {
+      font-size: .65rem;
+      color: #80a07d;
+      font-family: inherit;
+      font-weight: 600
+    }
+
+    .nav-btn.act .nav-lbl {
+      color: #2e7d32;
+      font-weight: 800
+    }
+
+    .nav-btn.act {
+      position: relative
+    }
+
+    .nav-btn.act::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 20%;
+      right: 20%;
+      height: 3px;
+      background: linear-gradient(90deg, #2e7d32, #66bb6a);
+      border-radius: 0 0 4px 4px;
+    }
+
+    /* ── UTIL ───────────────────────────────────────────────── */
+    .mt16 {
+      margin-top: 16px
+    }
+
+    .mt8 {
+      margin-top: 8px
+    }
+
+    .hidden {
+      display: none !important
+    }
+
+    @media(min-width:600px) {
+      .screen {
+        left: 50%;
+        transform: translateX(-50%);
+        width: 450px
+      }
+
+      .screen.active {
+        display: block
+      }
+
+      #bottomNav {
+        left: 50%;
+        transform: translateX(-50%);
+        width: 450px
+      }
+    }
+
+    @media(max-width:360px) {
+      .menu-grid {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .crop-pick {
+        grid-template-columns: repeat(3, 1fr)
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════════════════
+     SCREEN 1 · LANGUAGE SELECTION
+════════════════════════════════════════════ -->
+  <div id="screen-language" class="screen active">
+    <div class="lang-hero">
+      <span class="wheat-emoji">🌾</span>
+      <h1 class="app-title">FasalBima</h1>
+      <p class="app-sub">AI Crop Insurance · फसल बीमा</p>
+      <span class="pmfby-badge">PMFBY · Government of India</span>
+    </div>
+    <div class="lang-card">
+      <p class="lang-prompt">🌐 अपनी भाषा चुनें / Choose Your Language</p>
+      <div class="lang-grid" id="langGrid"></div>
+      <button class="lang-enter-btn" id="langEnterBtn" onclick="enterApp()">प्रवेश करें / Enter →</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+     SCREEN 2 · HOME DASHBOARD
+════════════════════════════════════════════ -->
+  <div id="screen-home" class="screen">
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="greeting" id="greetText">नमस्ते, किसान! 👋</span>
+        <span class="location">📍 Varanasi, Uttar Pradesh</span>
+      </div>
+      <div class="topbar-right">
+        <button class="lang-pill" onclick="goTo('screen-language')" id="langPillBtn">हि</button>
+        <div class="avatar-circle">R</div>
+      </div>
+    </div>
+
+    <div class="weather-card">
+      <div class="weather-inner">
+        <span class="weather-icon-big">⛅</span>
+        <div class="weather-details">
+          <div class="w-temp">32°C</div>
+          <div class="w-desc">Partly Cloudy · Varanasi</div>
+        </div>
+        <div class="weather-alert-pill">⚠️ <span id="wAlertText">भारी बारिश 2 दिन में</span></div>
+      </div>
+      <div class="ndvi-strip">
+        <span class="ndvi-val">🛰️ NDVI: 0.72 (Good)</span>
+        <div class="ndvi-bar">
+          <div class="ndvi-fill"></div>
+        </div>
+        <span class="ndvi-val">Healthy</span>
+      </div>
+    </div>
+
+    <div class="sec-head" id="homeSecHead">क्या करना है? / What do you need?</div>
+    <div class="menu-grid">
+      <button class="menu-card" onclick="goTo('screen-report')">
+        <div class="m-icon-wrap ic-red">📸</div>
+        <div class="m-title" id="mn1">नुकसान रिपोर्ट</div>
+        <div class="m-sub">Report Damage</div>
+      </button>
+      <button class="menu-card" onclick="goTo('screen-claims')">
+        <div class="m-icon-wrap ic-blue">📋</div>
+        <div class="m-title" id="mn2">मेरे दावे</div>
+        <div class="m-sub">My Claims</div>
+      </button>
+      <button class="menu-card" onclick="goTo('screen-crop')">
+        <div class="m-icon-wrap ic-green">🌱</div>
+        <div class="m-title" id="mn3">फसल दर्ज करें</div>
+        <div class="m-sub">Register Crop</div>
+      </button>
+      <button class="menu-card" onclick="goTo('screen-advisory')">
+        <div class="m-icon-wrap ic-amber">🧑‍🌾</div>
+        <div class="m-title" id="mn4">सलाह</div>
+        <div class="m-sub">Advisory</div>
+      </button>
+      <button class="menu-card" onclick="goTo('screen-helpline')">
+        <div class="m-icon-wrap ic-teal">📞</div>
+        <div class="m-title" id="mn5">हेल्पलाइन</div>
+        <div class="m-sub">Helpline</div>
+      </button>
+      <button class="menu-card" onclick="goTo('screen-satellite')">
+        <div class="m-icon-wrap ic-purple">🛰️</div>
+        <div class="m-title" id="mn6">सैटेलाइट</div>
+        <div class="m-sub">Satellite Map</div>
+      </button>
+    </div>
+
+    <div class="scheme-banner mt16">
+      <span class="scheme-icon">🏛️</span>
+      <div class="scheme-info">
+        <div class="scheme-tag">PMFBY · PM Fasal Bima Yojana</div>
+        <div class="scheme-desc" id="schText">दावा खिड़की खुली · खरीफ 2025</div>
+      </div>
+      <span class="scheme-arrow">›</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+     SCREEN 3 · REPORT DAMAGE
+════════════════════════════════════════════ -->
+  <div id="screen-report" class="screen">
+    <div class="page-header">
+      <button class="back-btn" onclick="goBack()">←</button>
+      <h2 class="page-title" id="repTitle">📸 नुकसान रिपोर्ट करें</h2>
+    </div>
+
+    <div class="step-progress">
+      <div class="sp-dot active" id="sp1">1</div>
+      <div class="sp-line"></div>
+      <div class="sp-dot" id="sp2">2</div>
+      <div class="sp-line"></div>
+      <div class="sp-dot" id="sp3">3</div>
+      <div class="sp-line"></div>
+      <div class="sp-dot" id="sp4">✓</div>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="rstep active" id="rs1">
+      <div class="rstep-head" id="rh1">🌾 फसल चुनें / Select Your Crop</div>
+      <div class="crop-pick" id="cropPickGrid"></div>
+      <div class="rstep-head mt16" id="rh2">⚡ नुकसान का कारण / Cause of Damage</div>
+      <div class="cause-grid" id="causePickGrid"></div>
+      <button class="btn-primary" onclick="nextStep(2)" id="rsN1">आगे / Next →</button>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="rstep" id="rs2">
+      <div class="rstep-head" id="rh3">📸 फोटो खींचें / Take Photos</div>
+      <div class="photo-zone">
+        <input type="file" id="photoFile" accept="image/*" capture="environment" multiple
+          onchange="handlePhotos(event)" />
+        <label for="photoFile" class="photo-upload-lbl">📷 <span id="pUpTxt">फोटो लें / Upload Photo</span></label>
+        <div class="photo-hint" id="pHintTxt">AI आपके फोटो से नुकसान का आकलन करेगा</div>
+        <div class="photo-preview" id="photoPreview"></div>
+      </div>
+      <div class="rstep-head" id="rh4">🎤 आवाज़ में बताएं / Describe by Voice</div>
+      <div class="voice-zone">
+        <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()">🎤 <span id="vBtnTxt">बोलना शुरू
+            करें</span></button>
+        <div class="transcript-box" id="transcript">आपकी आवाज़ यहाँ दिखेगी...</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-sec" onclick="nextStep(1)">← वापस</button>
+        <button class="btn-primary" onclick="nextStep(3)" id="rsN2">आगे →</button>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="rstep" id="rs3">
+      <div class="rstep-head" id="rh5">🗾 भूमि की जानकारी / Land Details</div>
+      <div class="form-card">
+        <label class="f-label" id="khasraLbl">खसरा नंबर / Khasra No.</label>
+        <input class="f-input" id="khasraInp" type="text" placeholder="जैसे: 123/4A" />
+      </div>
+      <div class="form-card">
+        <label class="f-label" id="areaLbl">प्रभावित क्षेत्र / Affected Area (बीघा)</label>
+        <div class="area-row">
+          <button class="area-minus" onclick="changeArea(-0.5)">−</button>
+          <span class="area-num" id="areaNum">2.0</span>
+          <span class="area-unit-lbl">बीघा</span>
+          <button class="area-plus" onclick="changeArea(0.5)">+</button>
+        </div>
+      </div>
+      <div class="form-card">
+        <label class="f-label" id="lossLbl">अनुमानित नुकसान / Estimated Loss</label>
+        <div class="slider-wrap">
+          <input type="range" class="loss-slider" id="lossSlider" min="10" max="100" step="10" value="50"
+            oninput="document.getElementById('lossNum').textContent=this.value" />
+          <div class="loss-big"><span id="lossNum">50</span>%</div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-sec" onclick="nextStep(2)">← वापस</button>
+        <button class="btn-primary" onclick="nextStep(4)" id="rsN3">📤 दर्ज करें</button>
+      </div>
+    </div>
+
+    <!-- Step 4: AI Result -->
+    <div class="rstep" id="rs4">
+      <div class="ai-card">
+        <div id="aiSpinner">
+          <div class="spinner-wrap">
+            <div class="spinner"></div>
+            <div class="spin-lbl" id="spinTxt">🤖 AI विश्लेषण हो रहा है...</div>
+          </div>
+        </div>
+        <div id="aiResult" class="hidden">
+          <div class="result-tick">✅</div>
+          <div class="result-h" id="rTitle">दावा दर्ज हो गया!</div>
+          <div class="claim-id-box">
+            <span class="claim-id-lbl" id="cIdLbl">Claim ID</span>
+            <span class="claim-id-val" id="cIdVal">PMFBY-2025-087234</span>
+          </div>
+          <div class="ai-assess">
+            <div class="assess-head" id="assessHead">🤖 AI Assessment</div>
+            <div class="bar-row"><span class="bar-row-lbl" id="brl1">फसल स्वास्थ्य</span>
+              <div class="bar-track">
+                <div class="bar-fill bf-red" style="width:35%" id="bfHealth"></div>
+              </div><span class="bar-pct">35%</span>
+            </div>
+            <div class="bar-row"><span class="bar-row-lbl" id="brl2">नुकसान</span>
+              <div class="bar-track">
+                <div class="bar-fill bf-orange" style="width:55%" id="bfDmg"></div>
+              </div><span class="bar-pct">55%</span>
+            </div>
+            <div class="bar-row"><span class="bar-row-lbl" id="brl3">विश्वसनीयता</span>
+              <div class="bar-track">
+                <div class="bar-fill bf-green" style="width:91%" id="bfConf"></div>
+              </div><span class="bar-pct">91%</span>
+            </div>
+          </div>
+          <div class="sat-verified">🛰️ Satellite NDVI Cross-Verified</div>
+          <p class="credit-note" id="creditNote">अगले 3 दिन में बैंक खाते में राशि आएगी।</p>
+          <button class="btn-primary" onclick="goTo('screen-claims')" id="viewClaimsBtn">📋 दावे देखें</button>
+          <button class="btn-sec" onclick="goTo('screen-home')" id="homeBtn">🏠 होम पर जाएं</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+     SCREEN 4 · MY CLAIMS
+════════════════════════════════════════════ -->
+  <div id="screen-claims" class="screen">
+    <div class="page-header">
+      <button class="back-btn" onclick="goBack()">←</button>
+      <h2 class="page-title" id="claimTitle">📋 मेरे दावे</h2>
+    </div>
+    <div class="claims-total">
+      <div>
+        <div class="ct-label">कुल दावा राशि</div>
+        <div class="ct-val">₹84,700</div>
+      </div>
+      <div style="text-align:right">
+        <div class="ct-label">कुल दावे</div>
+        <div class="ct-val">3</div>
+      </div>
+    </div>
+    <div class="claims-wrap" id="claimsList"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+     SCREEN 5 · CROP REGISTRATION
+════════════════════════════════════════════ -->
+  <div id="screen-crop" class="screen">
+    <div class="page-header">
+      <button class="back-btn" onclick="goBack()">←</button>
+      <h2 class="page-title" id="cropRegTitle">🌱 फसल दर्ज करें</h2>
+    </div>
+    <div class="crop-reg-body">
+      <div class="rstep-head" id="seasonLbl">मौसम चुनें / Select Season</div>
+      <div class="season-row">
+        <button class="s-btn sel" onclick="selSeason('kharif',this)">🌧️ खरीफ</button>
+        <button class="s-btn" onclick="selSeason('rabi',this)">❄️ रबी</button>
+        <button class="s-btn" onclick="selSeason('zaid',this)">☀️ जायद</button>
+      </div>
+      <div class="rstep-head mt16" id="cropTypeLbl">फसल चुनें / Choose Crop</div>
+      <div class="crop-pick" id="cropRegGrid"></div>
+      <div class="form-card mt16">
+        <label class="f-label" id="sowLbl">बुवाई तारीख / Sowing Date</label>
+        <input class="f-input" type="date" id="sowDate" />
+      </div>
+      <div class="form-card">
+        <label class="f-label">बीमा राशि / Sum Insured (₹)</label>
+        <input class="f-input" type="number" id="sumIns" placeholder="जैसे: 50000" />
+      </div>
+      <button class="btn-primary" onclick="registerCrop()">✅ फसल दर्ज करें / Register Crop</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+     SCREEN 6 · ADVISORY
+════════════════════════════════════════════ -->
+  <div id="screen-advisory" class="screen">
+    <div class="page-header">
+      <button class="back-btn" onclick="goBack()">←</button>
+      <h2 class="page-title" id="advTitle">🧑‍🌾 सलाह / Advisory</h2>
+    </div>
+    <div class="adv-wrap" id="advList"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+     SCREEN 7 · HELPLINE
+════════════════════════════════════════════ -->
+  <div id="screen-helpline" class="screen">
+    <div class="page-header">
+      <button class="back-btn" onclick="goBack()">←</button>
+      <h2 class="page-title" id="hlTitle">📞 हेल्पलाइन</h2>
+    </div>
+    <div class="hl-wrap" id="hlList">
+      <div class="hl-card">
+        <div class="hl-iw red">🆘</div>
+        <div class="hl-body">
+          <div class="hl-name">PMFBY Helpline</div>
+          <a href="tel:14447" class="hl-num">14447</a>
+          <div class="hl-hrs">24×7 · Free Toll</div>
+        </div>
+        <a href="tel:14447" class="call-fab">📞</a>
+      </div>
+      <div class="hl-card">
+        <div class="hl-iw green">🌾</div>
+        <div class="hl-body">
+          <div class="hl-name">Kisan Call Centre</div>
+          <a href="tel:18001801551" class="hl-num">1800-180-1551</a>
+          <div class="hl-hrs">6am–10pm Daily</div>
+        </div>
+        <a href="tel:18001801551" class="call-fab">📞</a>
+      </div>
+      <div class="hl-card">
+        <div class="hl-iw blue">🏦</div>
+        <div class="hl-body">
+          <div class="hl-name">Bank of India – Agri</div>
+          <a href="tel:1800220229" class="hl-num">1800-220-229</a>
+          <div class="hl-hrs">Mon–Sat · 9am–5pm</div>
+        </div>
+        <a href="tel:1800220229" class="call-fab">📞</a>
+      </div>
+      <div class="wa-card">
+        <span style="font-size:2rem">💬</span>
+        <div>
+          <div class="wa-name" id="waTitleTxt">WhatsApp पर मदद</div>
+          <div class="wa-sub">'HELP' भेजें → 9999-FASAL</div>
+        </div>
+        <a href="https://wa.me/919999327725" class="wa-btn">Chat</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+     SCREEN 8 · SATELLITE MAP
+════════════════════════════════════════════ -->
+  <div id="screen-satellite" class="screen">
+    <div class="page-header">
+      <button class="back-btn" onclick="goBack()">←</button>
+      <h2 class="page-title" id="satTitle">🛰️ सैटेलाइट मैप</h2>
+    </div>
+    <div class="sat-wrap">
+      <div class="sat-tabs">
+        <button class="sat-tab sel" onclick="switchSat('ndvi',this)">NDVI</button>
+        <button class="sat-tab" onclick="switchSat('rgb',this)">RGB</button>
+        <button class="sat-tab" onclick="switchSat('sar',this)">SAR</button>
+      </div>
+      <div class="sat-map">
+        <div class="sat-grad ndvi-grad" id="satGrad"></div>
+        <div class="sat-label-overlay" id="satLbl">NDVI – फसल स्वास्थ्य मानचित्र</div>
+        <div class="sat-legend">
+          <span><span class="leg-dot" style="color:#2e7d32">●</span>स्वस्थ</span>
+          <span><span class="leg-dot" style="color:#ff9800">●</span>मध्यम</span>
+          <span><span class="leg-dot" style="color:#e53935">●</span>नुकसान</span>
+        </div>
+      </div>
+      <div class="sat-stats">
+        <div class="sstat">
+          <div class="sstat-num sn-green">67%</div>
+          <div class="sstat-lbl" id="sl1">स्वस्थ क्षेत्र</div>
+        </div>
+        <div class="sstat">
+          <div class="sstat-num sn-amber">21%</div>
+          <div class="sstat-lbl" id="sl2">मध्यम नुकसान</div>
+        </div>
+        <div class="sstat">
+          <div class="sstat-num sn-red">12%</div>
+          <div class="sstat-lbl" id="sl3">गंभीर नुकसान</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+     BOTTOM NAV
+════════════════════════════════════════════ -->
+  <nav id="bottomNav">
+    <div class="bnav">
+      <button class="nav-btn act" id="nb-home" onclick="goTo('screen-home')">
+        <span class="nicn">🏠</span><span class="nav-lbl" id="nl1">होम</span>
+      </button>
+      <button class="nav-btn" id="nb-report" onclick="goTo('screen-report')">
+        <span class="nicn">📸</span><span class="nav-lbl" id="nl2">रिपोर्ट</span>
+      </button>
+      <button class="nav-btn" id="nb-claims" onclick="goTo('screen-claims')">
+        <span class="nicn">📋</span><span class="nav-lbl" id="nl3">दावे</span>
+      </button>
+      <button class="nav-btn" id="nb-advisory" onclick="goTo('screen-advisory')">
+        <span class="nicn">🌿</span><span class="nav-lbl" id="nl4">सलाह</span>
+      </button>
+    </div>
+  </nav>
+
+  <script>
+    /* ══════════════════════════════════════════
+       DATA
+    ══════════════════════════════════════════ */
+    const LANGS = [
+      { code: 'hi', name: 'हिंदी', native: 'Hindi', flag: '🇮🇳' },
+      { code: 'mr', name: 'मराठी', native: 'Marathi', flag: '🟠' },
+      { code: 'te', name: 'తెలుగు', native: 'Telugu', flag: '🔵' },
+      { code: 'ta', name: 'தமிழ்', native: 'Tamil', flag: '🟡' },
+      { code: 'kn', name: 'ಕನ್ನಡ', native: 'Kannada', flag: '🟤' },
+      { code: 'gu', name: 'ગુજરાતી', native: 'Gujarati', flag: '🟢' },
+      { code: 'pa', name: 'ਪੰਜਾਬੀ', native: 'Punjabi', flag: '🔴' },
+      { code: 'bn', name: 'বাংলা', native: 'Bengali', flag: '🟣' },
+      { code: 'en', name: 'English', native: 'English', flag: '🌐' }
+    ];
+
+    const T = {
+      hi: { greet: 'नमस्ते, किसान! 👋', mn1: 'नुकसान रिपोर्ट', mn2: 'मेरे दावे', mn3: 'फसल दर्ज करें', mn4: 'सलाह', mn5: 'हेल्पलाइन', mn6: 'सैटेलाइट', wAlert: 'भारी बारिश 2 दिन में', sch: 'दावा खिड़की खुली · खरीफ 2025', nl1: 'होम', nl2: 'रिपोर्ट', nl3: 'दावे', nl4: 'सलाह', repTitle: '📸 नुकसान रिपोर्ट करें', rh1: '🌾 फसल चुनें', rh2: '⚡ नुकसान का कारण', rh3: '📸 फोटो खींचें', rh4: '🎤 आवाज़ में बताएं', pUpTxt: 'फोटो लें / Upload Photo', pHint: 'AI आपके फोटो से नुकसान का आकलन करेगा', vBtn: 'बोलना शुरू करें', vStop: 'रोकें / Stop', rh5: '🗾 भूमि की जानकारी', kLbl: 'खसरा नंबर / Khasra No.', aLbl: 'प्रभावित क्षेत्र (बीघा)', lLbl: 'अनुमानित नुकसान', spinTxt: '🤖 AI विश्लेषण हो रहा है...', rTitle: 'दावा दर्ज हो गया!', cIdLbl: 'Claim ID', aHead: '🤖 AI आकलन', brl1: 'फसल स्वास्थ्य', brl2: 'नुकसान', brl3: 'विश्वसनीयता', creditNote: 'अगले 3 दिन में बैंक खाते में राशि आएगी।', vClm: '📋 दावे देखें', hmeBtn: '🏠 होम पर जाएं', clmTitle: '📋 मेरे दावे', cropRegTitle: '🌱 फसल दर्ज करें', sLbl: 'मौसम चुनें', cTypeLbl: 'फसल चुनें', sowLbl: 'बुवाई तारीख', advTitle: '🧑‍🌾 सलाह', hlTitle: '📞 हेल्पलाइन', waTitleTxt: 'WhatsApp पर मदद', satTitle: '🛰️ सैटेलाइट मैप', satLbl: 'NDVI – फसल स्वास्थ्य मानचित्र', sl1: 'स्वस्थ क्षेत्र', sl2: 'मध्यम नुकसान', sl3: 'गंभीर नुकसान', rsN1: 'आगे / Next →', rsN2: 'आगे →', rsN3: '📤 दर्ज करें', homeBtn: '🏠 होम पर जाएं', viewClaimsBtn: '📋 दावे देखें' },
+      en: { greet: 'Hello, Farmer! 👋', mn1: 'Report Damage', mn2: 'My Claims', mn3: 'Register Crop', mn4: 'Advisory', mn5: 'Helpline', mn6: 'Satellite', wAlert: 'Heavy rain in 2 days', sch: 'Claim window open · Kharif 2025', nl1: 'Home', nl2: 'Report', nl3: 'Claims', nl4: 'Advisory', repTitle: '📸 Report Damage', rh1: '🌾 Select Your Crop', rh2: '⚡ Cause of Damage', rh3: '📸 Take Photos', rh4: '🎤 Describe by Voice', pUpTxt: 'Take Photo / Upload', pHint: 'AI will assess damage from your photos', vBtn: 'Start Speaking', vStop: 'Stop Recording', rh5: '🗾 Land Details', kLbl: 'Khasra No.', aLbl: 'Affected Area (Bigha)', lLbl: 'Estimated Loss', spinTxt: '🤖 AI Analysis in progress...', rTitle: 'Claim Registered!', cIdLbl: 'Claim ID', aHead: '🤖 AI Assessment', brl1: 'Crop Health', brl2: 'Damage', brl3: 'Confidence', creditNote: 'Amount will be credited to your bank in 3 days.', vClm: '📋 View Claims', hmeBtn: '🏠 Go Home', clmTitle: '📋 My Claims', cropRegTitle: '🌱 Register Crop', sLbl: 'Select Season', cTypeLbl: 'Choose Crop', sowLbl: 'Sowing Date', advTitle: '🧑‍🌾 Advisory', hlTitle: '📞 Helpline', waTitleTxt: 'WhatsApp Help', satTitle: '🛰️ Satellite Map', satLbl: 'NDVI – Crop Health Map', sl1: 'Healthy Area', sl2: 'Moderate Damage', sl3: 'Severe Damage', rsN1: 'Next →', rsN2: 'Next →', rsN3: '📤 Submit', homeBtn: '🏠 Home', viewClaimsBtn: '📋 View Claims' },
+      mr: { greet: 'नमस्कार, शेतकरी! 👋', mn1: 'नुकसान नोंदवा', mn2: 'माझे दावे', mn3: 'पीक नोंदवा', mn4: 'सल्ला', mn5: 'हेल्पलाइन', mn6: 'उपग्रह', wAlert: '२ दिवसात मुसळधार पाऊस', sch: 'दावा खिडकी उघडी · खरीफ २०२५', nl1: 'मुखपृष्ठ', nl2: 'नोंदव', nl3: 'दावे', nl4: 'सल्ला', repTitle: '📸 नुकसान नोंदवा', rh1: '🌾 पीक निवडा', rh2: '⚡ नुकसानाचे कारण', rh3: '📸 फोटो काढा', rh4: '🎤 आवाजात सांगा', pUpTxt: 'फोटो काढा / अपलोड', pHint: 'AI फोटोवरून नुकसान मोजेल', vBtn: 'बोलणे सुरू करा', vStop: 'थांबा', rh5: '🗾 जमीन माहिती', kLbl: 'खसरा क्रमांक', aLbl: 'प्रभावित क्षेत्र (बिघे)', lLbl: 'अंदाजे नुकसान', spinTxt: '🤖 AI विश्लेषण सुरू...', rTitle: 'दावा नोंदवला!', cIdLbl: 'Claim ID', aHead: '🤖 AI मूल्यांकन', brl1: 'पीक आरोग्य', brl2: 'नुकसान', brl3: 'विश्वासार्हता', creditNote: '३ दिवसांत बँक खात्यात रक्कम येईल.', vClm: '📋 माझे दावे', hmeBtn: '🏠 मुख्यपृष्ठ', clmTitle: '📋 माझे दावे', cropRegTitle: '🌱 पीक नोंदवा', sLbl: 'हंगाम निवडा', cTypeLbl: 'पीक निवडा', sowLbl: 'पेरणी तारीख', advTitle: '🧑‍🌾 सल्ला', hlTitle: '📞 हेल्पलाइन', waTitleTxt: 'WhatsApp मदत', satTitle: '🛰️ उपग्रह नकाशा', satLbl: 'NDVI – पीक आरोग्य', sl1: 'निरोगी क्षेत्र', sl2: 'मध्यम नुकसान', sl3: 'गंभीर नुकसान', rsN1: 'पुढे →', rsN2: 'पुढे →', rsN3: '📤 नोंदवा', homeBtn: '🏠 मुख्य', viewClaimsBtn: '📋 माझे दावे' },
+      te: { greet: 'నమస్కారం, రైతు! 👋', mn1: 'నష్టం నివేదించు', mn2: 'నా క్లెయిమ్‌లు', mn3: 'పంట నమోదు', mn4: 'సలహా', mn5: 'హెల్ప్‌లైన్', mn6: 'ఉపగ్రహం', wAlert: '2 రోజుల్లో భారీ వర్షం', sch: 'క్లెయిమ్ తెరవబడింది · ఖరీఫ్ 2025', nl1: 'హోమ్', nl2: 'రిపోర్ట్', nl3: 'క్లెయిమ్', nl4: 'సలహా', repTitle: '📸 నష్టం నివేదించు', rh1: '🌾 పంట ఎంచుకోండి', rh2: '⚡ నష్టం కారణం', rh3: '📸 ఫోటో తీయండి', rh4: '🎤 వాయిస్‌లో చెప్పండి', pUpTxt: 'ఫోటో తీయండి / అప్‌లోడ్', pHint: 'AI ఫోటో నుండి నష్టాన్ని అంచనా వేస్తుంది', vBtn: 'మాట్లాడడం ప్రారంభించు', vStop: 'ఆపు', rh5: '🗾 భూమి వివరాలు', kLbl: 'ఖాసరా నంబర్', aLbl: 'ప్రభావిత విస్తీర్ణం', lLbl: 'అంచనా నష్టం', spinTxt: '🤖 AI విశ్లేషణ జరుగుతోంది...', rTitle: 'క్లెయిమ్ నమోదైంది!', cIdLbl: 'Claim ID', aHead: '🤖 AI అంచనా', brl1: 'పంట ఆరోగ్యం', brl2: 'నష్టం', brl3: 'విశ్వసనీయత', creditNote: '3 రోజుల్లో బ్యాంక్‌లో మొత్తం జమ అవుతుంది.', vClm: '📋 క్లెయిమ్‌లు చూడు', hmeBtn: '🏠 హోమ్', clmTitle: '📋 నా క్లెయిమ్‌లు', cropRegTitle: '🌱 పంట నమోదు', sLbl: 'సీజన్ ఎంచుకోండి', cTypeLbl: 'పంట ఎంచుకోండి', sowLbl: 'విత్తు తేదీ', advTitle: '🧑‍🌾 సలహా', hlTitle: '📞 హెల్ప్‌లైన్', waTitleTxt: 'WhatsApp సహాయం', satTitle: '🛰️ ఉపగ్రహ మ్యాప్', satLbl: 'NDVI – పంట ఆరోగ్య మ్యాప్', sl1: 'ఆరోగ్యకరమైన', sl2: 'మధ్యమ నష్టం', sl3: 'తీవ్రమైన నష్టం', rsN1: 'తర్వాత →', rsN2: 'తర్వాత →', rsN3: '📤 సమర్పించు', homeBtn: '🏠 హోమ్', viewClaimsBtn: '📋 క్లెయిమ్‌లు' },
+      ta: { greet: 'வணக்கம், விவசாயி! 👋', mn1: 'சேதம் புகார்', mn2: 'என் கோரல்கள்', mn3: 'பயிர் பதிவு', mn4: 'ஆலோசனை', mn5: 'உதவி எண்', mn6: 'செயற்கைக்கோள்', wAlert: '2 நாளில் கனமழை', sch: 'கோரல் சாளரம் திறந்துள்ளது', nl1: 'முகப்பு', nl2: 'புகார்', nl3: 'கோரல்', nl4: 'ஆலோசனை', repTitle: '📸 சேதம் புகார்', rh1: '🌾 பயிர் தேர்வு', rh2: '⚡ சேத காரணம்', rh3: '📸 புகைப்படம் எடு', rh4: '🎤 குரலில் கூறு', pUpTxt: 'புகைப்படம் / பதிவேற்று', pHint: 'AI புகைப்படத்திலிருந்து சேதத்தை மதிப்பிடும்', vBtn: 'பேசத் தொடங்கு', vStop: 'நிறுத்து', rh5: '🗾 நில விவரங்கள்', kLbl: 'கிசான் எண்', aLbl: 'பாதிக்கப்பட்ட பரப்பு', lLbl: 'மதிப்பிடப்பட்ட சேதம்', spinTxt: '🤖 AI பகுப்பாய்வு...', rTitle: 'கோரல் பதிவாயிற்று!', cIdLbl: 'Claim ID', aHead: '🤖 AI மதிப்பீடு', brl1: 'பயிர் ஆரோக்கியம்', brl2: 'சேதம்', brl3: 'நம்பகத்தன்மை', creditNote: '3 நாளில் வங்கி கணக்கில் தொகை வரும்.', vClm: '📋 கோரல்கள் பார்க்க', hmeBtn: '🏠 முகப்பு', clmTitle: '📋 என் கோரல்கள்', cropRegTitle: '🌱 பயிர் பதிவு', sLbl: 'பருவம் தேர்வு', cTypeLbl: 'பயிர் தேர்வு', sowLbl: 'விதைத்த தேதி', advTitle: '🧑‍🌾 ஆலோசனை', hlTitle: '📞 உதவி எண்', waTitleTxt: 'WhatsApp உதவி', satTitle: '🛰️ செயற்கைக்கோள்', satLbl: 'NDVI – பயிர் ஆரோக்கிய வரைபடம்', sl1: 'ஆரோக்கியமான', sl2: 'மிதமான சேதம்', sl3: 'கடுமையான சேதம்', rsN1: 'அடுத்து →', rsN2: 'அடுத்து →', rsN3: '📤 சமர்ப்பி', homeBtn: '🏠 முகப்பு', viewClaimsBtn: '📋 கோரல்கள்' }
+    };
+    // fallback for others
+    ['kn', 'gu', 'pa', 'bn'].forEach(c => { if (!T[c]) T[c] = { ...T['hi'] } });
+
+    const CROPS = [
+      { e: '🌾', n: 'गेहूं', en: 'Wheat' }, { e: '🌾', n: 'चावल', en: 'Rice' }, { e: '🌽', n: 'मक्का', en: 'Maize' },
+      { e: '🌱', n: 'सोयाबीन', en: 'Soybean' }, { e: '🥜', n: 'मूंगफली', en: 'Groundnut' }, { e: '🌿', n: 'कपास', en: 'Cotton' },
+      { e: '🧅', n: 'प्याज', en: 'Onion' }, { e: '🍬', n: 'गन्ना', en: 'Sugarcane' }
+    ];
+    const CAUSES = [
+      { e: '🌧️', n: 'बाढ़', en: 'Flood' }, { e: '🌵', n: 'सूखा', en: 'Drought' }, { e: '⛈️', n: 'ओलावृष्टि', en: 'Hail' },
+      { e: '🔥', n: 'आग', en: 'Fire' }, { e: '🐛', n: 'कीट', en: 'Pest' }, { e: '🌪️', n: 'आंधी', en: 'Cyclone' }
+    ];
+    const CLAIMS = [
+      { e: '🌾', n: 'Wheat – Flood Damage', d: 'Mar 15, 2025', amt: '₹28,500', b: 'b-approved', s: '✅ Approved' },
+      { e: '🌽', n: 'Maize – Hail Damage', d: 'Jan 8, 2025', amt: '₹14,200', b: 'b-pending', s: '⏳ Pending' },
+      { e: '🌿', n: 'Cotton – Pest Attack', d: 'Nov 20, 2024', amt: '₹42,000', b: 'b-review', s: '🔍 Under Review' }
+    ];
+    const ADVISORY = [
+      { type: 'danger', tag: '⚠️ Weather Alert', title: 'Heavy Rainfall Warning', desc: 'IMD forecasts 80mm+ rainfall in next 48hrs. Harvest standing crops immediately if ripe.', date: 'Apr 12, 2026' },
+      { type: 'warning', tag: '🐛 Pest Advisory', title: 'Fall Armyworm in Maize', desc: 'Pest detected in 3 nearby districts. Apply recommended pesticide within 72 hours.', date: 'Apr 10, 2026' },
+      { type: 'info', tag: '🌱 Agri Tip', title: 'Optimal Drip Irrigation', desc: 'Reduce water usage by 40% with drip irrigation. Subsidy available under PMKSY scheme.', date: 'Apr 8, 2026' },
+      { type: 'scheme', tag: '💰 PM Kisan Alert', title: '19th Installment Due', desc: '₹2000 will be credited on April 15. Ensure Aadhaar-bank linking is complete.', date: 'Apr 7, 2026' }
+    ];
+
+    /* ══════════════════════════════════════════
+       STATE
+    ══════════════════════════════════════════ */
+    let lang = 'hi', curScreen = 'screen-language', history = [];
+    let selCrop = null, selCause = null, area = 2.0, isRec = false, recog = null;
+
+    /* ══════════════════════════════════════════
+       INIT
+    ══════════════════════════════════════════ */
+    window.addEventListener('DOMContentLoaded', () => {
+      buildLangGrid();
+      buildCropGrid('cropPickGrid');
+      buildCropGrid('cropRegGrid');
+      buildCauseGrid();
+      buildClaims();
+      buildAdvisory();
+    });
+
+    /* ══════════════════════════════════════════
+       LANGUAGE GRID
+    ══════════════════════════════════════════ */
+    function buildLangGrid() {
+      document.getElementById('langGrid').innerHTML = LANGS.map(l => `
+    <button class="lang-opt${l.code === 'hi' ? ' sel' : ''}" id="lo-${l.code}" onclick="pickLang('${l.code}')">
+      <span class="lf">${l.flag}</span>
+      <div class="ln">${l.name}</div>
+      <div class="lsub">${l.native}</div>
+    </button>`).join('');
+    }
+    function pickLang(code) {
+      document.querySelectorAll('.lang-opt').forEach(e => e.classList.remove('sel'));
+      document.getElementById('lo-' + code).classList.add('sel');
+      lang = code;
+    }
+    function enterApp() {
+      applyLang(lang);
+      goTo('screen-home');
+      document.getElementById('bottomNav').style.display = 'block';
+      const pill = document.getElementById('langPillBtn');
+      if (pill) pill.textContent = lang.toUpperCase().slice(0, 2);
+    }
+
+    /* ══════════════════════════════════════════
+       APPLY TRANSLATIONS
+    ══════════════════════════════════════════ */
+    function applyLang(l) {
+      const M = T[l] || T['hi'];
+      const s = (id, k) => { const el = document.getElementById(id); if (el && M[k] !== undefined) el.textContent = M[k]; };
+      Object.keys(M).forEach(k => s(k, k));
+    }
+
+    /* ══════════════════════════════════════════
+       NAVIGATION
+    ══════════════════════════════════════════ */
+    function goTo(id) {
+      if (curScreen !== id && curScreen !== 'screen-language') history.push(curScreen);
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      curScreen = id;
+      updateNav(id);
+      if (id === 'screen-report') resetReport();
+    }
+    function goBack() {
+      const prev = history.pop() || 'screen-home';
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(prev).classList.add('active');
+      curScreen = prev;
+      updateNav(prev);
+    }
+    function updateNav(id) {
+      const map = { 'screen-home': 'nb-home', 'screen-report': 'nb-report', 'screen-claims': 'nb-claims', 'screen-advisory': 'nb-advisory' };
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('act'));
+      if (map[id]) document.getElementById(map[id]).classList.add('act');
+    }
+
+    /* ══════════════════════════════════════════
+       CROP / CAUSE GRIDS
+    ══════════════════════════════════════════ */
+    function buildCropGrid(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.innerHTML = CROPS.map((c, i) => `
+    <button class="crop-btn" id="${id}-c${i}" onclick="selectCrop('${id}',${i})">
+      <span class="cb-emoji">${c.e}</span>
+      <span class="cb-name">${c.n}</span>
+    </button>`).join('');
+    }
+    function selectCrop(gid, i) {
+      document.querySelectorAll(`#${gid} .crop-btn`).forEach(b => b.classList.remove('sel'));
+      document.getElementById(`${gid}-c${i}`).classList.add('sel');
+      if (gid === 'cropPickGrid') selCrop = CROPS[i];
+    }
+    function buildCauseGrid() {
+      const el = document.getElementById('causePickGrid');
+      if (!el) return;
+      el.innerHTML = CAUSES.map((c, i) => `
+    <button class="cause-btn" id="cau${i}" onclick="selectCause(${i})">
+      <span class="cau-emoji">${c.e}</span>
+      <span class="cau-name">${c.n}</span>
+    </button>`).join('');
+    }
+    function selectCause(i) {
+      document.querySelectorAll('.cause-btn').forEach(b => b.classList.remove('sel'));
+      document.getElementById('cau' + i).classList.add('sel');
+      selCause = CAUSES[i];
+    }
+
+    /* ══════════════════════════════════════════
+       REPORT STEPS
+    ══════════════════════════════════════════ */
+    function resetReport() {
+      nextStep(1);
+    }
+    function nextStep(n) {
+      document.querySelectorAll('.rstep').forEach(s => s.classList.remove('active'));
+      document.getElementById('rs' + n).classList.add('active');
+      [1, 2, 3, 4].forEach(i => {
+        const d = document.getElementById('sp' + i);
+        d.classList.remove('active', 'done');
+        if (i < n) d.classList.add('done');
+        if (i === n) d.classList.add('active');
+      });
+      if (n === 4) runAI();
+    }
+    function runAI() {
+      const sp = document.getElementById('aiSpinner'), res = document.getElementById('aiResult');
+      sp.classList.remove('hidden'); res.classList.add('hidden');
+      const id = 'PMFBY-2025-' + Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('cIdVal').textContent = id;
+      setTimeout(() => {
+        sp.classList.add('hidden'); res.classList.remove('hidden');
+        CLAIMS.unshift({ e: selCrop?.e || '🌾', n: (selCrop?.en || 'Crop') + ' – ' + (selCause?.en || 'Damage'), d: new Date().toLocaleDateString('en-IN'), amt: '₹' + Math.floor(10000 + Math.random() * 30000).toLocaleString('en-IN'), b: 'b-pending', s: '⏳ Pending' });
+        buildClaims();
+      }, 3000);
+    }
+
+    /* ══════════════════════════════════════════
+       AREA / SLIDER
+    ══════════════════════════════════════════ */
+    function changeArea(d) {
+      area = Math.max(0.5, Math.min(50, area + d));
+      document.getElementById('areaNum').textContent = area.toFixed(1);
+    }
+
+    /* ══════════════════════════════════════════
+       PHOTOS
+    ══════════════════════════════════════════ */
+    function handlePhotos(e) {
+      const pre = document.getElementById('photoPreview');
+      Array.from(e.target.files).forEach(f => {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(f); img.className = 'thumb'; img.alt = 'crop'; pre.appendChild(img);
+      });
+    }
+
+    /* ══════════════════════════════════════════
+       VOICE
+    ══════════════════════════════════════════ */
+    function toggleVoice() {
+      const M = T[lang] || T['hi'];
+      const btn = document.getElementById('voiceBtn'), tx = document.getElementById('transcript'), lbl = document.getElementById('vBtnTxt');
+      if (!isRec) {
+        isRec = true; btn.classList.add('rec'); lbl.textContent = M.vStop || 'Stop';
+        tx.textContent = '...';
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SR) {
+          recog = new SR(); recog.lang = lang === 'en' ? 'en-IN' : lang + '-IN';
+          recog.onresult = ev => tx.textContent = ev.results[0][0].transcript;
+          recog.onerror = () => stopVoice(); recog.onend = () => stopVoice(); recog.start();
+        } else {
+          setTimeout(() => { tx.textContent = '(Demo: मेरी फसल बाढ़ से बर्बाद हो गई है, लगभग 3 बीघे में नुकसान है)'; stopVoice(); }, 2500);
+        }
+      } else { if (recog) recog.stop(); stopVoice(); }
+    }
+    function stopVoice() {
+      isRec = false;
+      const M = T[lang] || T['hi'];
+      document.getElementById('voiceBtn').classList.remove('rec');
+      document.getElementById('vBtnTxt').textContent = M.vBtn || 'Start Speaking';
+    }
+
+    /* ══════════════════════════════════════════
+       CLAIMS LIST
+    ══════════════════════════════════════════ */
+    function buildClaims() {
+      const el = document.getElementById('claimsList');
+      if (!el) return;
+      el.innerHTML = CLAIMS.map(c => `
+    <div class="claim-card">
+      <div class="cc-icon">${c.e}</div>
+      <div class="cc-body">
+        <div class="cc-name">${c.n}</div>
+        <div class="cc-date">${c.d}</div>
+        <div class="cc-amount">${c.amt}</div>
+      </div>
+      <span class="badge ${c.b}">${c.s}</span>
+    </div>`).join('');
+    }
+
+    /* ══════════════════════════════════════════
+       ADVISORY
+    ══════════════════════════════════════════ */
+    function buildAdvisory() {
+      const el = document.getElementById('advList');
+      if (!el) return;
+      const col = { danger: '#e53935', warning: '#ff9800', info: '#2e7d32', scheme: '#1565c0' };
+      el.innerHTML = ADVISORY.map(a => `
+    <div class="adv-card ${a.type}">
+      <div class="adv-tag" style="color:${col[a.type]}">${a.tag}</div>
+      <div class="adv-title">${a.title}</div>
+      <div class="adv-desc">${a.desc}</div>
+      <div class="adv-date">${a.date}</div>
+    </div>`).join('');
+    }
+
+    /* ══════════════════════════════════════════
+       SATELLITE
+    ══════════════════════════════════════════ */
+    function switchSat(type, btn) {
+      document.querySelectorAll('.sat-tab').forEach(t => t.classList.remove('sel'));
+      btn.classList.add('sel');
+      const g = document.getElementById('satGrad');
+      g.className = 'sat-grad ' + type + '-grad';
+      const labels = { ndvi: 'NDVI – फसल स्वास्थ्य मानचित्र', rgb: 'RGB – वास्तविक रंग छवि', sar: 'SAR – राडार (बाढ़ पहचान)' };
+      document.getElementById('satLbl').textContent = labels[type];
+    }
+
+    /* ══════════════════════════════════════════
+       CROP REGISTRATION
+    ══════════════════════════════════════════ */
+    function selSeason(s, btn) {
+      document.querySelectorAll('.s-btn').forEach(b => b.classList.remove('sel'));
+      btn.classList.add('sel');
+    }
+    function registerCrop() {
+      const d = document.getElementById('sowDate').value, a = document.getElementById('sumIns').value;
+      if (!d || !a) { alert('सभी जानकारी भरें / Please fill all details'); return; }
+      alert('✅ फसल सफलतापूर्वक दर्ज हो गई!\nCrop successfully registered!');
+      goTo('screen-home');
+    }
+  </script>
+</body>
+
+</html>
