@@ -1,0 +1,2026 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0" />
+  <meta name="description" content="FasalBima – AI-powered bilingual crop insurance app for Indian farmers. Voice-based damage detection and insurance claims." />
+  <title>🌾 FasalBima AI – Farmer Insurance App</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Noto+Sans+Devanagari:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ════════════════════════════════════════
+       CSS VARIABLES
+    ════════════════════════════════════════ */
+    :root {
+      --g-900:#1b5e20; --g-800:#2e7d32; --g-700:#388e3c;
+      --g-500:#4caf50; --g-200:#c8e6c9; --g-50:#e8f5e9;
+      --amber:#f9a825;  --amber-d:#e65100; --amber-pale:#fff8e1;
+      --red:#c62828;    --red-d:#b71c1c;   --red-pale:#ffebee;
+      --blue:#1565c0;   --blue-d:#0d47a1;  --blue-pale:#e3f2fd;
+      --teal:#00695c;
+      --bg:#f0f7f0;     --surface:#ffffff;
+      --text:#1a2e1a;   --text-m:#5d7451; --text-l:#90a88e;
+      --radius:18px;    --r-sm:12px;      --r-xs:8px;
+      --shadow:0 4px 24px rgba(46,125,50,.12);
+      --shadow-lg:0 8px 40px rgba(46,125,50,.18);
+      --font:'Noto Sans','Noto Sans Devanagari',sans-serif;
+      --transition:all .24s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ════════════════════════════════════════
+       RESET & BASE
+    ════════════════════════════════════════ */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);overflow:hidden;-webkit-tap-highlight-color:transparent}
+    button,input,select,textarea{font-family:inherit;outline:none}
+    img{display:block}
+
+    /* ════════════════════════════════════════
+       SCREEN SYSTEM
+    ════════════════════════════════════════ */
+    .screen{
+      display:none;position:fixed;inset:0;overflow-y:auto;overflow-x:hidden;
+      background:var(--bg);padding-bottom:86px;
+      animation:screenIn .32s cubic-bezier(.4,0,.2,1)
+    }
+    .screen.active{display:block}
+    @keyframes screenIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+    /* ════════════════════════════════════════
+       ── SCREEN 1: LANGUAGE / SPLASH ──
+    ════════════════════════════════════════ */
+    #s-lang{
+      background:linear-gradient(160deg,#0a2e0f 0%,#1b5e20 38%,#2e7d32 65%,#1565c0 100%);
+      display:flex!important;flex-direction:column;align-items:center;justify-content:flex-start;
+      padding:0 0 40px;overflow-y:auto
+    }
+    .splash-hero{
+      width:100%;text-align:center;padding:54px 20px 36px;
+      background:rgba(0,0,0,.12);border-bottom:1px solid rgba(255,255,255,.1);
+      position:relative;overflow:hidden
+    }
+    .splash-hero::before{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse at 50% -10%,rgba(255,215,0,.18) 0%,transparent 65%)
+    }
+    .hero-emoji{
+      font-size:4rem;display:block;margin-bottom:14px;
+      filter:drop-shadow(0 4px 14px rgba(255,215,0,.5));
+      animation:float 3.2s ease-in-out infinite
+    }
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    .hero-title{font-size:2.8rem;font-weight:800;color:#fff;letter-spacing:-.3px;line-height:1;text-shadow:0 2px 20px rgba(0,0,0,.4)}
+    .hero-sub{color:rgba(255,255,255,.75);font-size:1rem;margin-top:10px;font-weight:500;letter-spacing:.4px}
+    .pmfby-badge{
+      display:inline-block;margin-top:16px;padding:6px 18px;
+      background:rgba(255,215,0,.2);border:1px solid rgba(255,215,0,.45);
+      border-radius:50px;color:#ffd700;font-size:.76rem;font-weight:700;letter-spacing:1px
+    }
+
+    /* AI feature pills */
+    .ai-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:20px;padding:0 16px}
+    .ai-pill{
+      background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+      border-radius:50px;padding:6px 14px;color:rgba(255,255,255,.9);
+      font-size:.75rem;font-weight:600;backdrop-filter:blur(6px)
+    }
+
+    /* Language selection card */
+    .lang-card{
+      width:calc(100% - 32px);max-width:480px;margin:24px auto 0;
+      background:rgba(255,255,255,.97);border-radius:26px;padding:30px 20px;
+      box-shadow:0 24px 64px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.12)
+    }
+    .lang-prompt{
+      text-align:center;font-size:.97rem;font-weight:700;color:var(--g-800);
+      margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid var(--g-50)
+    }
+    .lang-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .lang-opt{
+      background:var(--g-50);border:2px solid transparent;border-radius:16px;
+      padding:14px 6px;text-align:center;cursor:pointer;transition:var(--transition)
+    }
+    .lang-opt:hover,.lang-opt.sel{border-color:var(--g-500);background:var(--g-200);transform:translateY(-3px);box-shadow:0 6px 20px rgba(46,125,50,.18)}
+    .lang-opt.sel{background:var(--g-200)}
+    .lf{font-size:1.8rem;display:block;margin-bottom:5px}
+    .ln{font-size:.84rem;font-weight:700;color:var(--text)}
+    .lsub{font-size:.7rem;color:var(--text-m);margin-top:2px}
+    .lang-enter-btn{
+      display:block;width:100%;margin-top:20px;padding:17px;
+      background:linear-gradient(135deg,var(--g-800),var(--g-700));
+      color:#fff;border:none;border-radius:50px;font-size:1rem;font-weight:700;
+      cursor:pointer;box-shadow:0 6px 24px rgba(46,125,50,.42);transition:var(--transition)
+    }
+    .lang-enter-btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(46,125,50,.52)}
+
+    /* ════════════════════════════════════════
+       TOPBAR
+    ════════════════════════════════════════ */
+    .topbar{
+      position:sticky;top:0;z-index:50;
+      background:linear-gradient(135deg,var(--g-900) 0%,var(--g-800) 55%,var(--g-700) 100%);
+      padding:14px 18px;display:flex;align-items:center;justify-content:space-between;
+      box-shadow:0 4px 24px rgba(0,0,0,.22)
+    }
+    .tb-left{display:flex;flex-direction:column;gap:3px}
+    .tb-greeting{font-size:1.1rem;font-weight:700;color:#fff}
+    .tb-loc{font-size:.74rem;color:rgba(255,255,255,.78);display:flex;align-items:center;gap:4px}
+    .tb-right{display:flex;align-items:center;gap:10px}
+    .lang-pill{
+      background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);
+      color:#fff;border-radius:20px;padding:6px 13px;font-size:.82rem;font-weight:700;
+      cursor:pointer;transition:background .2s
+    }
+    .lang-pill:hover{background:rgba(255,255,255,.28)}
+    .avatar{
+      width:38px;height:38px;border-radius:50%;
+      background:linear-gradient(135deg,#ffd740,#ff8f00);
+      display:flex;align-items:center;justify-content:center;
+      font-weight:800;font-size:.95rem;color:#fff;box-shadow:0 2px 10px rgba(0,0,0,.22)
+    }
+    /* Global mic button in topbar */
+    .topbar-mic{
+      width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;
+      background:rgba(255,255,255,.18);color:#fff;font-size:1.2rem;
+      display:flex;align-items:center;justify-content:center;transition:var(--transition)
+    }
+    .topbar-mic:hover{background:rgba(255,255,255,.3)}
+    .topbar-mic.listening{background:var(--red);animation:micropulse 1s infinite}
+    @keyframes micropulse{0%,100%{box-shadow:0 0 0 0 rgba(198,40,40,.6)}50%{box-shadow:0 0 0 8px rgba(198,40,40,0)}}
+
+    /* ════════════════════════════════════════
+       WEATHER CARD
+    ════════════════════════════════════════ */
+    .weather-card{
+      margin:16px;border-radius:22px;overflow:hidden;
+      background:linear-gradient(135deg,#0277bd,#0288d1,#039be5);
+      box-shadow:0 8px 36px rgba(2,119,189,.35)
+    }
+    .wc-inner{padding:18px 20px;display:flex;align-items:center;gap:14px}
+    .wc-icon{font-size:2.6rem;filter:drop-shadow(0 2px 8px rgba(0,0,0,.2))}
+    .wc-details{flex:1}
+    .wc-temp{font-size:1.7rem;font-weight:800;color:#fff;line-height:1}
+    .wc-desc{font-size:.8rem;color:rgba(255,255,255,.85);margin-top:3px}
+    .wc-alert{
+      background:rgba(255,152,0,.28);border:1px solid rgba(255,152,0,.55);
+      border-radius:12px;padding:8px 12px;font-size:.74rem;font-weight:600;
+      color:#fff;text-align:center;max-width:130px;line-height:1.35
+    }
+    .ndvi-strip{
+      background:rgba(0,0,0,.14);padding:10px 20px;display:flex;align-items:center;
+      gap:10px;border-top:1px solid rgba(255,255,255,.1)
+    }
+    .ndvi-lbl{font-size:.78rem;color:rgba(255,255,255,.9);font-weight:600}
+    .ndvi-track{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden}
+    .ndvi-fill{height:100%;width:72%;background:linear-gradient(90deg,#69f0ae,#00e676);border-radius:3px}
+
+    /* ════════════════════════════════════════
+       SECTION HEADING & MENU GRID
+    ════════════════════════════════════════ */
+    .sec-head{padding:16px 18px 10px;font-size:.76rem;font-weight:700;color:var(--text-m);text-transform:uppercase;letter-spacing:.9px}
+    .menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:0 16px}
+    .menu-card{
+      background:var(--surface);border:none;border-radius:22px;
+      padding:22px 10px 17px;display:flex;flex-direction:column;align-items:center;
+      gap:8px;cursor:pointer;box-shadow:var(--shadow);transition:var(--transition);
+      position:relative;overflow:hidden
+    }
+    .menu-card::after{
+      content:'';position:absolute;inset:0;border-radius:22px;
+      background:linear-gradient(135deg,rgba(46,125,50,.06),transparent);
+      opacity:0;transition:opacity .2s
+    }
+    .menu-card:hover::after{opacity:1}
+    .menu-card:hover{transform:translateY(-6px) scale(1.03);box-shadow:var(--shadow-lg)}
+    .menu-card:active{transform:scale(.97)}
+    .mc-icon{
+      width:54px;height:54px;border-radius:17px;display:flex;align-items:center;
+      justify-content:center;font-size:1.85rem;box-shadow:0 4px 14px rgba(0,0,0,.12)
+    }
+    .ic-red{background:linear-gradient(135deg,#ff7676,#e53935)}
+    .ic-blue{background:linear-gradient(135deg,#42a5f5,#1565c0)}
+    .ic-green{background:linear-gradient(135deg,#66bb6a,#2e7d32)}
+    .ic-amber{background:linear-gradient(135deg,#ffca28,#e65100)}
+    .ic-teal{background:linear-gradient(135deg,#26c6da,#00838f)}
+    .ic-purple{background:linear-gradient(135deg,#ab47bc,#4a148c)}
+    .mc-title{font-size:.8rem;font-weight:700;color:var(--text);text-align:center;line-height:1.3}
+    .mc-sub{font-size:.67rem;color:var(--text-m);text-align:center}
+
+    /* ════════════════════════════════════════
+       SCHEME BANNER
+    ════════════════════════════════════════ */
+    .scheme-banner{
+      margin:16px;border-radius:20px;padding:17px 20px;
+      background:linear-gradient(135deg,#bf360c,#e64a19,#ff7043);
+      box-shadow:0 8px 28px rgba(230,74,25,.38);
+      display:flex;align-items:center;gap:14px;cursor:pointer;transition:var(--transition)
+    }
+    .scheme-banner:hover{transform:translateY(-2px)}
+    .sb-icon{font-size:2.1rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))}
+    .sb-info{flex:1}
+    .sb-tag{font-size:.7rem;color:rgba(255,255,255,.8);font-weight:700;letter-spacing:1px;text-transform:uppercase}
+    .sb-desc{font-size:.95rem;font-weight:700;color:#fff;margin-top:2px}
+    .sb-arrow{color:rgba(255,255,255,.7);font-size:1.3rem}
+
+    /* ════════════════════════════════════════
+       PAGE HEADER  (sub-screens)
+    ════════════════════════════════════════ */
+    .page-header{
+      position:sticky;top:0;z-index:50;
+      background:linear-gradient(135deg,var(--g-900),var(--g-800),var(--g-700));
+      padding:14px 18px;display:flex;align-items:center;gap:14px;
+      box-shadow:0 4px 24px rgba(0,0,0,.2)
+    }
+    .back-btn{
+      width:40px;height:40px;border-radius:13px;border:none;cursor:pointer;
+      background:rgba(255,255,255,.18);color:#fff;font-size:1.2rem;
+      display:flex;align-items:center;justify-content:center;transition:background .2s;flex-shrink:0
+    }
+    .back-btn:hover{background:rgba(255,255,255,.3)}
+    .ph-title{font-size:1.1rem;font-weight:700;color:#fff;flex:1}
+    .ph-mic{
+      width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;
+      background:rgba(255,255,255,.18);color:#fff;font-size:1.1rem;
+      display:flex;align-items:center;justify-content:center;transition:var(--transition)
+    }
+    .ph-mic.listening{background:var(--red);animation:micropulse 1s infinite}
+
+    /* ════════════════════════════════════════
+       STEP PROGRESS BAR
+    ════════════════════════════════════════ */
+    .step-bar{padding:20px 20px 8px;display:flex;align-items:center}
+    .sp-dot{
+      width:36px;height:36px;border-radius:50%;background:var(--g-200);color:var(--text-l);
+      font-weight:700;font-size:.88rem;display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;transition:var(--transition)
+    }
+    .sp-dot.active{background:linear-gradient(135deg,var(--g-800),var(--g-700));color:#fff;box-shadow:0 0 0 6px rgba(46,125,50,.15)}
+    .sp-dot.done{background:linear-gradient(135deg,var(--g-500),var(--g-700));color:#fff}
+    .sp-line{flex:1;height:3px;background:var(--g-200);border-radius:2px}
+
+    /* ════════════════════════════════════════
+       REPORT STEPS
+    ════════════════════════════════════════ */
+    .rstep{display:none;padding:16px 16px 24px;animation:screenIn .3s ease}
+    .rstep.active{display:block}
+    .rstep-head{font-size:.96rem;font-weight:700;color:var(--text);margin-bottom:14px;padding-left:4px}
+
+    /* ── CROP PICKER ── */
+    .crop-pick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:6px}
+    .crop-btn{
+      background:var(--surface);border:2px solid var(--g-50);border-radius:14px;
+      padding:13px 6px;text-align:center;cursor:pointer;transition:var(--transition);
+      box-shadow:0 2px 8px rgba(0,0,0,.05)
+    }
+    .crop-btn:hover,.crop-btn.sel{border-color:var(--g-500);background:var(--g-50);transform:scale(1.05)}
+    .crop-btn.sel{box-shadow:0 4px 16px rgba(46,125,50,.22)}
+    .cb-emoji{font-size:1.95rem;display:block;margin-bottom:4px}
+    .cb-name{font-size:.68rem;font-weight:700;color:var(--g-800)}
+
+    /* ── CAUSE GRID ── */
+    .cause-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+    .cause-btn{
+      background:var(--surface);border:2px solid var(--amber-pale);border-radius:14px;
+      padding:14px 8px;text-align:center;cursor:pointer;transition:var(--transition);
+      box-shadow:0 2px 8px rgba(0,0,0,.05)
+    }
+    .cause-btn:hover,.cause-btn.sel{border-color:var(--amber);background:var(--amber-pale);transform:scale(1.04)}
+    .cause-btn.sel{box-shadow:0 4px 14px rgba(255,152,0,.22)}
+    .cau-emoji{font-size:1.65rem;display:block;margin-bottom:4px}
+    .cau-name{font-size:.7rem;font-weight:700;color:var(--amber-d)}
+
+    /* ════════════════════════════════════════
+       ── PHOTO UPLOAD ZONE ──
+    ════════════════════════════════════════ */
+    .photo-zone{
+      border:2px dashed var(--g-200);border-radius:20px;padding:26px 20px;
+      background:linear-gradient(135deg,var(--g-50),#f0faf0);
+      text-align:center;margin-bottom:14px;transition:var(--transition)
+    }
+    .photo-zone.drag-over{border-color:var(--g-500);background:var(--g-50)}
+    .photo-upload-lbl{
+      display:inline-flex;align-items:center;gap:10px;cursor:pointer;
+      background:linear-gradient(135deg,var(--g-800),var(--g-700));
+      color:#fff;padding:15px 30px;border-radius:50px;font-size:.97rem;font-weight:700;
+      box-shadow:0 6px 22px rgba(46,125,50,.38);transition:var(--transition)
+    }
+    .photo-upload-lbl:hover{transform:scale(1.04);box-shadow:0 10px 30px rgba(46,125,50,.48)}
+    #photoInput{display:none}
+    .photo-preview{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:14px}
+    .thumb{
+      width:84px;height:84px;object-fit:cover;border-radius:13px;
+      border:3px solid var(--g-200);box-shadow:0 4px 14px rgba(0,0,0,.13);
+      cursor:pointer;transition:transform .2s
+    }
+    .thumb:hover{transform:scale(1.08)}
+    .photo-hint{font-size:.78rem;color:var(--g-500);margin-top:10px;font-weight:500}
+
+    /* ════════════════════════════════════════
+       ── VOICE RECORD ZONE ──
+    ════════════════════════════════════════ */
+    .voice-zone{text-align:center;margin-bottom:16px}
+    .mic-ring{
+      width:80px;height:80px;border-radius:50%;border:3px solid var(--g-200);
+      display:flex;align-items:center;justify-content:center;margin:0 auto 14px;
+      transition:var(--transition);cursor:pointer;background:var(--surface);
+      box-shadow:var(--shadow)
+    }
+    .mic-ring svg{width:36px;height:36px;fill:var(--g-800);transition:fill .2s}
+    .mic-ring.recording{border-color:var(--red);background:var(--red-pale);animation:micropulse 1s infinite}
+    .mic-ring.recording svg{fill:var(--red)}
+    .voice-btn{
+      display:inline-flex;align-items:center;gap:10px;
+      background:linear-gradient(135deg,var(--blue),var(--blue-d));
+      color:#fff;border:none;padding:16px 34px;border-radius:50px;
+      font-size:.97rem;font-weight:700;cursor:pointer;
+      box-shadow:0 6px 22px rgba(21,101,192,.36);transition:var(--transition)
+    }
+    .voice-btn:hover{transform:scale(1.04)}
+    .voice-btn.rec{background:linear-gradient(135deg,var(--red),var(--red-d));animation:pulseBtn 1.2s infinite}
+    @keyframes pulseBtn{0%,100%{box-shadow:0 6px 22px rgba(198,40,40,.32)}50%{box-shadow:0 6px 32px rgba(198,40,40,.7),0 0 0 10px rgba(198,40,40,.12)}}
+    .voice-transcript{
+      min-height:52px;margin-top:12px;padding:13px 16px;
+      background:#f3f4f6;border-radius:12px;font-size:.9rem;
+      color:var(--text-m);font-style:italic;text-align:left;line-height:1.5
+    }
+
+    /* Waveform canvas */
+    #waveform-canvas{
+      display:block;width:100%;max-width:280px;height:48px;margin:12px auto;
+      border-radius:10px;background:rgba(46,125,50,.06)
+    }
+
+    /* ════════════════════════════════════════
+       FORM ELEMENTS
+    ════════════════════════════════════════ */
+    .form-grp{margin-bottom:20px}
+    .form-lbl{display:block;font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:9px}
+    .form-input{
+      width:100%;padding:14px 16px;border:2px solid #e0e0e0;border-radius:13px;
+      font-size:1rem;color:var(--text);background:var(--surface);
+      transition:border-color .2s;outline:none
+    }
+    .form-input:focus{border-color:var(--g-500)}
+    .area-row{display:flex;align-items:center;gap:16px;margin-bottom:4px}
+    .area-btn{
+      width:44px;height:44px;background:var(--g-800);color:#fff;border:none;
+      border-radius:50%;font-size:1.5rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--transition)
+    }
+    .area-btn:hover{background:var(--g-700);transform:scale(1.1)}
+    .area-val{font-size:1.9rem;font-weight:700;color:var(--text);min-width:64px;text-align:center}
+    .area-unit{font-size:.9rem;color:var(--text-m);font-weight:600}
+    .loss-slider{
+      appearance: none;
+      width:100%;margin:8px 0;-webkit-appearance:none;
+      height:9px;border-radius:5px;
+      background:linear-gradient(to right,var(--g-500),var(--amber),var(--red));
+      outline:none;cursor:pointer
+    }
+    .loss-slider::-webkit-slider-thumb{
+      -webkit-appearance:none;width:28px;height:28px;border-radius:50%;
+      background:#fff;border:3px solid var(--g-800);
+      box-shadow:0 2px 10px rgba(0,0,0,.22);cursor:pointer
+    }
+    .loss-display{text-align:center;font-size:2.2rem;font-weight:700;color:var(--amber-d);margin-top:4px}
+
+    /* Season toggle */
+    .season-toggle{display:flex;gap:12px;margin-bottom:4px}
+    .season-btn{
+      flex:1;padding:14px;border:2px solid #e0e0e0;border-radius:13px;
+      background:var(--surface);font-size:.9rem;font-weight:700;cursor:pointer;
+      transition:var(--transition);color:var(--text-m)
+    }
+    .season-btn.active{border-color:var(--g-800);background:var(--g-50);color:var(--g-800)}
+
+    /* ════════════════════════════════════════
+       ── AI ANALYSIS RESULT SCREEN ──
+    ════════════════════════════════════════ */
+    .ai-result-container{padding:16px}
+
+    /* Spinner */
+    .ai-spinner-box{
+      background:var(--surface);border-radius:var(--radius);padding:48px 20px;
+      text-align:center;box-shadow:var(--shadow)
+    }
+    .ai-ring{
+      width:72px;height:72px;border:6px solid var(--g-200);
+      border-top-color:var(--g-800);border-radius:50%;margin:0 auto 18px;
+      animation:spin .8s linear infinite
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .ai-spin-txt{font-size:.95rem;color:var(--text-m);font-weight:600;line-height:1.6}
+
+    /* ELIGIBLE: claim can be filed */
+    .ai-eligible-card{
+      background:var(--surface);border-radius:var(--radius);padding:28px 20px;
+      text-align:center;box-shadow:var(--shadow);border-top:4px solid var(--red)
+    }
+    .ai-elig-icon{font-size:3.6rem;margin-bottom:10px;animation:popIn .4s ease}
+    @keyframes popIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+    .ai-elig-title{font-size:1.3rem;font-weight:800;color:var(--red);margin-bottom:6px}
+    .ai-elig-sub{font-size:.88rem;color:var(--text-m);margin-bottom:20px;line-height:1.6}
+
+    /* NOT ELIGIBLE */
+    .ai-healthy-card{
+      background:var(--surface);border-radius:var(--radius);padding:28px 20px;
+      text-align:center;box-shadow:var(--shadow);border-top:4px solid var(--g-500)
+    }
+    .ai-hlth-icon{font-size:3.6rem;margin-bottom:10px;animation:popIn .4s ease}
+    .ai-hlth-title{font-size:1.3rem;font-weight:800;color:var(--g-800);margin-bottom:8px}
+    .ai-hlth-msg{font-size:.9rem;color:var(--text-m);margin-bottom:18px;line-height:1.7;padding:14px;background:var(--g-50);border-radius:var(--r-sm)}
+
+    /* NO CROP DETECTED */
+    .ai-nocrop-card{
+      background:var(--surface);border-radius:var(--radius);padding:28px 20px;
+      text-align:center;box-shadow:var(--shadow);border-top:4px solid var(--amber)
+    }
+    .ai-nocrop-icon{font-size:3.6rem;margin-bottom:10px;animation:popIn .4s ease}
+    .ai-nocrop-title{font-size:1.3rem;font-weight:800;color:var(--amber-d);margin-bottom:8px}
+    .ai-nocrop-msg{font-size:.9rem;color:var(--text-m);margin-bottom:18px;line-height:1.7;padding:14px;background:var(--amber-pale);border-radius:var(--r-sm)}
+
+    /* Claim ID box */
+    .claim-id-box{
+      display:flex;flex-direction:column;gap:4px;background:var(--red-pale);
+      border:1px solid #ef9a9a;border-radius:13px;padding:13px 20px;margin-bottom:20px
+    }
+    .claim-id-lbl{font-size:.75rem;color:var(--text-m);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+    .claim-id-val{font-size:1.2rem;font-weight:800;color:var(--red);font-family:monospace;letter-spacing:1.5px}
+
+    /* AI stats grid */
+    .ai-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+    .ai-stat{background:#f9fafb;border-radius:13px;padding:14px 10px;text-align:center}
+    .ai-stat-val{font-size:1.5rem;font-weight:800;line-height:1}
+    .ai-stat-lbl{font-size:.68rem;color:var(--text-m);font-weight:600;margin-top:4px}
+    .stat-red{color:var(--red)}
+    .stat-green{color:var(--g-800)}
+    .stat-amber{color:var(--amber-d)}
+
+    /* Damage bars */
+    .damage-card{background:#f9fafb;border-radius:13px;padding:16px;margin-bottom:16px;text-align:left}
+    .damage-heading{font-weight:700;font-size:.84rem;color:var(--text-m);margin-bottom:14px;text-align:center;text-transform:uppercase;letter-spacing:.5px}
+    .d-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:.82rem;font-weight:600}
+    .d-bar-row span:first-child{width:88px;flex-shrink:0;color:var(--text-m)}
+    .d-track{flex:1;height:10px;background:#e0e0e0;border-radius:5px;overflow:hidden}
+    .d-fill{height:100%;border-radius:5px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+    .d-fill.red{background:linear-gradient(90deg,#ef5350,#c62828)}
+    .d-fill.orange{background:linear-gradient(90deg,#ffb300,#e65100)}
+    .d-fill.green{background:linear-gradient(90deg,#66bb6a,#2e7d32)}
+    .d-bar-row span:last-child{width:36px;text-align:right;font-weight:800}
+
+    /* Satellite chip */
+    .sat-chip{
+      background:var(--blue-pale);border:1px solid #90caf9;border-radius:9px;
+      padding:8px 14px;font-size:.82rem;color:var(--blue);font-weight:600;
+      margin-bottom:16px;display:inline-block
+    }
+
+    /* Recommendations */
+    .recs-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+    .rec-item{
+      display:flex;align-items:flex-start;gap:10px;background:var(--g-50);
+      border-radius:12px;padding:12px 14px
+    }
+    .rec-icon{font-size:1.3rem;flex-shrink:0}
+    .rec-text{font-size:.85rem;color:var(--text);line-height:1.5}
+
+    /* ════════════════════════════════════════
+       BUTTONS
+    ════════════════════════════════════════ */
+    .btn-p{
+      display:block;width:100%;padding:16px;
+      background:linear-gradient(135deg,var(--g-800),var(--g-700));
+      color:#fff;border:none;border-radius:50px;font-size:1rem;font-weight:700;
+      cursor:pointer;box-shadow:0 6px 22px rgba(46,125,50,.38);
+      margin-top:18px;transition:var(--transition);font-family:inherit
+    }
+    .btn-p:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(46,125,50,.45)}
+    .btn-p:active{transform:scale(.97)}
+    .btn-p.red{background:linear-gradient(135deg,var(--red),var(--red-d));box-shadow:0 6px 22px rgba(198,40,40,.38)}
+    .btn-p.red:hover{box-shadow:0 10px 30px rgba(198,40,40,.5)}
+    .btn-p.blue{background:linear-gradient(135deg,var(--blue),var(--blue-d));box-shadow:0 6px 22px rgba(21,101,192,.38)}
+    .btn-s{
+      display:block;width:100%;padding:14px;
+      background:var(--surface);color:var(--g-800);border:2px solid var(--g-800);
+      border-radius:50px;font-size:.95rem;font-weight:700;cursor:pointer;
+      margin-top:12px;transition:var(--transition);font-family:inherit
+    }
+    .btn-s:hover{background:var(--g-50)}
+    .nav-row{display:flex;gap:10px}
+    .nav-row .btn-p,.nav-row .btn-s{margin-top:20px;flex:1}
+
+    /* ════════════════════════════════════════
+       ── CLAIMS LIST ──
+    ════════════════════════════════════════ */
+    .claims-container{padding:16px;display:flex;flex-direction:column;gap:12px}
+    .claim-card{
+      background:var(--surface);border-radius:var(--radius);padding:18px 16px;
+      box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;
+      cursor:pointer;transition:var(--transition)
+    }
+    .claim-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+    .cc-crop{font-size:2.1rem;flex-shrink:0}
+    .cc-info{flex:1}
+    .cc-name{font-weight:700;font-size:.96rem;color:var(--text)}
+    .cc-date{font-size:.78rem;color:var(--text-m);margin-top:2px}
+    .cc-amount{font-size:1.1rem;font-weight:700;color:var(--g-800)}
+    .badge{padding:4px 12px;border-radius:20px;font-size:.74rem;font-weight:700;flex-shrink:0}
+    .badge-approved{background:var(--g-50);color:var(--g-800);border:1px solid var(--g-200)}
+    .badge-pending{background:var(--amber-pale);color:var(--amber-d);border:1px solid #ffe082}
+    .badge-reviewing{background:var(--blue-pale);color:var(--blue);border:1px solid #90caf9}
+    .badge-rejected{background:var(--red-pale);color:var(--red);border:1px solid #ef9a9a}
+
+    /* ════════════════════════════════════════
+       ── ADVISORY ──
+    ════════════════════════════════════════ */
+    .advisory-list{padding:16px;display:flex;flex-direction:column;gap:12px}
+    .advisory-card{
+      background:var(--surface);border-radius:var(--radius);padding:16px;
+      box-shadow:var(--shadow);border-left:4px solid var(--g-500)
+    }
+    .advisory-card.warning{border-left-color:var(--amber)}
+    .advisory-card.alert{border-left-color:var(--red)}
+    .adv-tag{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-m);margin-bottom:6px}
+    .adv-title{font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:6px}
+    .adv-desc{font-size:.82rem;color:var(--text-m);line-height:1.5}
+    .adv-date{font-size:.74rem;color:var(--text-l);margin-top:8px}
+
+    /* ════════════════════════════════════════
+       ── HELPLINE ──
+    ════════════════════════════════════════ */
+    .hl-list{padding:16px;display:flex;flex-direction:column;gap:12px}
+    .hl-card{
+      background:var(--surface);border-radius:var(--radius);padding:18px 16px;
+      box-shadow:var(--shadow);display:flex;align-items:center;gap:14px
+    }
+    .hl-ico{font-size:2rem;flex-shrink:0}
+    .hl-info{flex:1}
+    .hl-name{font-weight:700;font-size:.9rem;color:var(--text);margin-bottom:2px}
+    .hl-num{font-size:1.1rem;font-weight:700;color:var(--g-800);text-decoration:none;display:block}
+    .hl-hrs{font-size:.74rem;color:var(--text-l);margin-top:2px}
+    .call-btn{
+      font-size:1.4rem;background:var(--g-800);border-radius:50%;
+      width:46px;height:46px;display:flex;align-items:center;justify-content:center;
+      text-decoration:none;flex-shrink:0;box-shadow:0 4px 14px rgba(46,125,50,.32);transition:var(--transition)
+    }
+    .call-btn:hover{transform:scale(1.12)}
+    .wa-card{
+      background:var(--g-50);border:1px solid var(--g-200);border-radius:var(--radius);
+      padding:16px;display:flex;align-items:center;gap:14px
+    }
+    .wa-icon{font-size:2.1rem;flex-shrink:0}
+    .wa-title{font-weight:700;font-size:.9rem;color:var(--g-800)}
+    .wa-sub{font-size:.8rem;color:var(--text-m);margin-top:2px}
+    .wa-btn{
+      margin-left:auto;background:#25d366;color:#fff;padding:10px 20px;
+      border-radius:50px;text-decoration:none;font-weight:700;font-size:.9rem;
+      box-shadow:0 4px 14px rgba(37,211,102,.32);flex-shrink:0;transition:var(--transition)
+    }
+    .wa-btn:hover{transform:scale(1.05)}
+
+    /* ════════════════════════════════════════
+       ── SATELLITE MAP ──
+    ════════════════════════════════════════ */
+    .sat-view{padding:16px}
+    .sat-toggle{display:flex;gap:8px;margin-bottom:16px}
+    .sat-tab{
+      flex:1;padding:12px;border:2px solid #e0e0e0;border-radius:11px;
+      background:var(--surface);font-weight:700;cursor:pointer;
+      transition:var(--transition);color:var(--text-m);font-size:.9rem;font-family:inherit
+    }
+    .sat-tab.active{border-color:var(--g-800);background:var(--g-50);color:var(--g-800)}
+    .sat-map-wrap{
+      height:240px;border-radius:var(--radius);overflow:hidden;
+      position:relative;margin-bottom:16px;box-shadow:var(--shadow)
+    }
+    .sat-grad{position:absolute;inset:0;transition:background .5s}
+    .sat-grad.ndvi{background:radial-gradient(ellipse at 30% 60%,#2e7d32 0%,#66bb6a 25%,#ffb300 55%,#f44336 80%,#8b0000 100%)}
+    .sat-grad.rgb{background:linear-gradient(135deg,#8bc34a 0%,#cddc39 30%,#ffeb3b 60%,#ff8f00 100%)}
+    .sat-grad.sar{background:linear-gradient(135deg,#212121 0%,#455a64 40%,#78909c 70%,#b0bec5 100%)}
+    .sat-label{position:absolute;bottom:12px;left:12px;background:rgba(0,0,0,.65);color:#fff;padding:6px 12px;border-radius:8px;font-size:.78rem;font-weight:600}
+    .sat-legend{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.92);padding:8px 12px;border-radius:9px;font-size:.74rem;font-weight:600;display:flex;flex-direction:column;gap:4px}
+    .leg-item{display:flex;align-items:center;gap:6px}
+    .leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .leg-dot.g{background:#4caf50}.leg-dot.o{background:#ff9800}.leg-dot.r{background:#f44336}
+    .sat-stats{display:flex;gap:10px}
+    .stat-box{flex:1;background:var(--surface);border-radius:13px;padding:16px 10px;text-align:center;box-shadow:var(--shadow)}
+    .stat-num{font-size:1.65rem;font-weight:800;color:var(--g-800)}
+    .stat-lbl{font-size:.7rem;color:var(--text-m);font-weight:600;margin-top:4px}
+
+    /* ════════════════════════════════════════
+       BOTTOM NAV
+    ════════════════════════════════════════ */
+    #bottom-nav{
+      position:fixed;bottom:0;left:0;right:0;z-index:100;
+      background:var(--surface);border-top:1px solid rgba(0,0,0,.08);
+      display:none;height:68px;
+      box-shadow:0 -4px 24px rgba(0,0,0,.1)
+    }
+    .bnav-inner{display:flex;height:100%}
+    .nav-item{
+      flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:4px;cursor:pointer;border:none;background:none;transition:var(--transition);
+      padding:8px 0;color:var(--text-l);font-size:.68rem;font-weight:700;font-family:inherit
+    }
+    .nav-item:hover{color:var(--g-800)}
+    .nav-item.active{color:var(--g-800)}
+    .nav-item.active .nav-ico{background:var(--g-50);color:var(--g-800);border-radius:14px}
+    .nav-ico{font-size:1.35rem;padding:6px 14px;transition:var(--transition)}
+
+    /* ════════════════════════════════════════
+       VOICE BUBBLE  (global floating)
+    ════════════════════════════════════════ */
+    .voice-bubble{
+      position:fixed;bottom:78px;left:50%;transform:translateX(-50%);
+      max-width:88%;background:rgba(30,30,30,.88);color:#fff;
+      padding:10px 18px;border-radius:24px;font-size:.88rem;font-weight:500;
+      backdrop-filter:blur(10px);z-index:200;opacity:0;pointer-events:none;
+      transition:opacity .3s;text-align:center;line-height:1.5
+    }
+    .voice-bubble.visible{opacity:1}
+    .voice-bubble.final{border:1.5px solid rgba(76,175,80,.6)}
+
+    /* ════════════════════════════════════════
+       TOAST NOTIFICATION
+    ════════════════════════════════════════ */
+    .toast{
+      position:fixed;top:24px;left:50%;transform:translateX(-50%);
+      background:rgba(30,40,30,.9);color:#fff;padding:12px 22px;
+      border-radius:50px;font-size:.88rem;font-weight:600;
+      backdrop-filter:blur(10px);z-index:300;
+      animation:toastIn .3s ease;pointer-events:none
+    }
+    @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+    /* ════════════════════════════════════════
+       MODAL
+    ════════════════════════════════════════ */
+    .modal-overlay{
+      position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:250;
+      display:flex;align-items:flex-end;justify-content:center;
+      opacity:0;pointer-events:none;transition:opacity .3s
+    }
+    .modal-overlay.open{opacity:1;pointer-events:all}
+    .modal-sheet{
+      background:var(--surface);border-radius:26px 26px 0 0;padding:24px 20px 36px;
+      width:100%;max-width:500px;transform:translateY(100%);
+      transition:transform .35s cubic-bezier(.4,0,.2,1)
+    }
+    .modal-overlay.open .modal-sheet{transform:none}
+    .modal-drag{width:42px;height:5px;background:#e0e0e0;border-radius:3px;margin:0 auto 24px}
+    .modal-title{font-size:1.15rem;font-weight:800;color:var(--text);margin-bottom:16px}
+
+    /* ════════════════════════════════════════
+       CROP REGISTER SCREEN
+    ════════════════════════════════════════ */
+    .reg-body{padding:16px}
+
+    /* ════════════════════════════════════════
+       RESPONSIVE: wider screens → phone frame
+    ════════════════════════════════════════ */
+    @media (min-width:520px){
+      .screen,.topbar,#bottom-nav,#s-lang{max-width:480px;left:50%;transform:translateX(-50%)}
+      .screen{right:auto;width:480px}
+      #bottom-nav{right:auto;width:480px}
+      .voice-bubble{max-width:440px}
+      .toast{max-width:440px}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN 1 — LANGUAGE SELECT
+═══════════════════════════════════════════════ -->
+<div id="s-lang" class="screen active" role="main" aria-label="Language Selection">
+  <div class="splash-hero">
+    <span class="hero-emoji">🌾</span>
+    <h1 class="hero-title">FasalBima AI</h1>
+    <p class="hero-sub">भारत का AI फसल बीमा / India's AI Crop Insurance</p>
+    <span class="pmfby-badge">PMFBY ENDORSED · KHARIF 2025-26</span>
+    <div class="ai-pills">
+      <span class="ai-pill">🤖 AI Crop Detection</span>
+      <span class="ai-pill">📸 Damage Analysis</span>
+      <span class="ai-pill">🎙️ Voice-First</span>
+      <span class="ai-pill">💰 Auto Claims</span>
+    </div>
+  </div>
+  <div class="lang-card" role="region" aria-label="Language Selection">
+    <div class="lang-prompt">🗣️ अपनी भाषा चुनें / Choose Your Language</div>
+    <div class="lang-grid" id="langGrid"></div>
+    <button class="lang-enter-btn" id="enterBtn" onclick="enterApp()">
+      प्रवेश करें / Enter App →
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN 2 — HOME DASHBOARD
+═══════════════════════════════════════════════ -->
+<div id="s-home" class="screen" role="main" aria-label="Home Dashboard">
+  <div class="topbar">
+    <div class="tb-left">
+      <div class="tb-greeting" id="homeGreeting">नमस्ते, किसान!</div>
+      <div class="tb-loc">📍 <span id="homeLocation">Vidisha, MP</span></div>
+    </div>
+    <div class="tb-right">
+      <button class="lang-pill" id="homeLangBtn" onclick="quickLangToggle()">हि</button>
+      <button class="topbar-mic" id="homeMic" onclick="globalVoiceListen()" title="Voice Command" aria-label="Voice Command">
+        <span class="mic-icon">🎤</span>
+      </button>
+      <div class="avatar" id="homeAvatar">क</div>
+    </div>
+  </div>
+
+  <!-- Weather card -->
+  <div class="weather-card" role="region" aria-label="Weather Information">
+    <div class="wc-inner">
+      <span class="wc-icon">⛅</span>
+      <div class="wc-details">
+        <div class="wc-temp">34°C</div>
+        <div class="wc-desc" id="wc-desc">आंशिक बादल · Partly Cloudy</div>
+      </div>
+      <div class="wc-alert" id="wc-alert">⚠️ भारी बारिश 2 दिन में</div>
+    </div>
+    <div class="ndvi-strip">
+      <span class="ndvi-lbl" id="ndvi-lbl">NDVI स्कोर: 0.72</span>
+      <div class="ndvi-track"><div class="ndvi-fill" style="width:72%"></div></div>
+      <span style="color:rgba(255,255,255,.85);font-size:.78rem;font-weight:600">स्वस्थ</span>
+    </div>
+  </div>
+
+  <!-- Main menu -->
+  <div class="sec-head" id="home-sec1">🛠️ त्वरित सेवाएं / Quick Services</div>
+  <div class="menu-grid">
+    <button class="menu-card" onclick="goTo('s-report')" id="nav-report" aria-label="Report Damage">
+      <div class="mc-icon ic-red">📸</div>
+      <span class="mc-title" data-key="reportDamage">नुकसान रिपोर्ट</span>
+      <span class="mc-sub">AI Photo Analysis</span>
+    </button>
+    <button class="menu-card" onclick="goTo('s-claims')" id="nav-claims" aria-label="My Claims">
+      <div class="mc-icon ic-blue">📋</div>
+      <span class="mc-title" data-key="myClaims">मेरे दावे</span>
+      <span class="mc-sub">Track Status</span>
+    </button>
+    <button class="menu-card" onclick="goTo('s-register')" id="nav-register" aria-label="Register Crop">
+      <div class="mc-icon ic-green">🌱</div>
+      <span class="mc-title" data-key="cropRegister">फसल दर्ज</span>
+      <span class="mc-sub">PMFBY Enroll</span>
+    </button>
+    <button class="menu-card" onclick="goTo('s-advisory')" id="nav-advisory" aria-label="Advisory">
+      <div class="mc-icon ic-amber">🧑‍🌾</div>
+      <span class="mc-title" data-key="advisory">सलाह</span>
+      <span class="mc-sub">Agri Tips</span>
+    </button>
+    <button class="menu-card" onclick="goTo('s-satellite')" id="nav-satellite" aria-label="Satellite Map">
+      <div class="mc-icon ic-teal">🛰️</div>
+      <span class="mc-title" data-key="satellite">सैटेलाइट</span>
+      <span class="mc-sub">NDVI Map</span>
+    </button>
+    <button class="menu-card" onclick="goTo('s-helpline')" id="nav-helpline" aria-label="Helpline">
+      <div class="mc-icon ic-purple">📞</div>
+      <span class="mc-title" data-key="helpline">हेल्पलाइन</span>
+      <span class="mc-sub">24×7 Support</span>
+    </button>
+  </div>
+
+  <!-- Scheme banner -->
+  <div class="scheme-banner" onclick="goTo('s-claims')" role="button" aria-label="View Claim Window">
+    <span class="sb-icon">🏛️</span>
+    <div class="sb-info">
+      <div class="sb-tag">PMFBY · KHARIF 2025-26</div>
+      <div class="sb-desc" id="schemeInfo">दावा खिड़की खुली · Claim Window Open</div>
+    </div>
+    <span class="sb-arrow">›</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN 3 — DAMAGE REPORT (4 steps)
+═══════════════════════════════════════════════ -->
+<div id="s-report" class="screen" aria-label="Damage Report">
+  <div class="page-header">
+    <button class="back-btn" onclick="goBack()" aria-label="Go Back">‹</button>
+    <span class="ph-title" id="reportTitle">📸 नुकसान रिपोर्ट करें</span>
+    <button class="ph-mic" id="reportMic" onclick="screenVoiceListen('report')" aria-label="Voice Input">🎤</button>
+  </div>
+
+  <!-- Step progress bar -->
+  <div class="step-bar" role="progressbar" aria-label="Report Steps">
+    <div class="sp-dot active" id="sp1">1</div>
+    <div class="sp-line"></div>
+    <div class="sp-dot" id="sp2">2</div>
+    <div class="sp-line"></div>
+    <div class="sp-dot" id="sp3">3</div>
+    <div class="sp-line"></div>
+    <div class="sp-dot" id="sp4">4</div>
+  </div>
+
+  <!-- ── Step 1: Choose Crop ── -->
+  <div class="rstep active" id="rstep-1">
+    <div class="rstep-head" id="stepLabel1">🌾 फसल चुनें / Select Crop</div>
+    <div class="crop-pick" id="cropGrid"></div>
+    <div class="voice-zone">
+      <div class="mic-ring" id="step1Mic" onclick="stepVoiceListen(1)" aria-label="Voice: Say crop name">
+        <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm-1 1.93V18H9v2h6v-2h-2v-2.07A5.002 5.002 0 0 0 17 11h-2a3 3 0 0 1-6 0H7a5.002 5.002 0 0 0 4 4.93z"/></svg>
+      </div>
+      <div class="voice-transcript" id="step1Transcript">🎤 फसल का नाम बोलें... / Say crop name...</div>
+      <canvas id="waveform-canvas"></canvas>
+    </div>
+    <button class="btn-p" onclick="reportStep(2)" id="step1Btn">आगे → Next</button>
+  </div>
+
+  <!-- ── Step 2: Choose Cause ── -->
+  <div class="rstep" id="rstep-2">
+    <div class="rstep-head" id="stepLabel2">⚠️ नुकसान का कारण / Cause of Damage</div>
+    <div class="cause-grid" id="causeGrid"></div>
+    <div class="voice-zone">
+      <button class="voice-btn" id="step2VoiceBtn" onclick="stepVoiceListen(2)" aria-label="Voice: Say damage cause">
+        <span>🎤</span> <span id="step2VoiceTxt">कारण बोलें / Say Cause</span>
+      </button>
+      <div class="voice-transcript" id="step2Transcript"></div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-s" onclick="reportStep(1)">‹ वापस</button>
+      <button class="btn-p" onclick="reportStep(3)" id="step2Btn">आगे → Next</button>
+    </div>
+  </div>
+
+  <!-- ── Step 3: Photo + Voice Description + Land ── -->
+  <div class="rstep" id="rstep-3">
+    <div class="rstep-head" id="photoLabel">📷 फोटो खींचें / Upload Photo</div>
+
+    <div class="photo-zone" id="dropZone"
+         ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+      <label class="photo-upload-lbl" for="photoInput" id="photoUploadLbl">
+        📷 <span id="photoUploadText">फोटो लें / Upload</span>
+      </label>
+      <input type="file" id="photoInput" accept="image/*" capture="environment" multiple onchange="handlePhotoUpload(event)" />
+      <div class="photo-preview" id="photoPreview"></div>
+      <div class="photo-hint" id="photoHint">📌 AI फसल की पहचान और नुकसान का पता लगाएगा / AI detects crop & damage</div>
+    </div>
+
+    <div class="rstep-head" id="voiceLabel" style="margin-top:18px">🎙️ आवाज़ में बताएं / Describe by Voice</div>
+    <div class="voice-zone">
+      <button class="voice-btn" id="voiceBtn" onclick="toggleMainVoice()" aria-label="Start Voice Recording">
+        <span class="mic-icon">🎤</span>
+        <span id="voiceBtnText">बोलना शुरू करें</span>
+      </button>
+      <div class="voice-transcript" id="voiceTranscript"></div>
+    </div>
+
+    <div class="rstep-head" id="landLabel" style="margin-top:18px">🗺️ भूमि विवरण / Land Details</div>
+    <div class="form-grp">
+      <label class="form-lbl" id="khasraLabel" for="khasraInput">खसरा नंबर / Khasra No.</label>
+      <input class="form-input" id="khasraInput" type="text" placeholder="e.g. 245/2" aria-label="Khasra Number" />
+    </div>
+    <div class="form-grp">
+      <label class="form-lbl" id="areaLabel">कितने बीघे / Affected Area</label>
+      <div class="area-row">
+        <button class="area-btn" onclick="changeArea(-0.5)" aria-label="Decrease Area">−</button>
+        <div class="area-val" id="areaValue">2.0</div>
+        <div class="area-unit">बीघा</div>
+        <button class="area-btn" onclick="changeArea(0.5)" aria-label="Increase Area">+</button>
+      </div>
+    </div>
+    <div class="form-grp">
+      <label class="form-lbl" id="lossLabel">अनुमानित नुकसान % / Estimated Loss %</label>
+      <input class="loss-slider" type="range" min="0" max="100" value="40" id="lossSlider" oninput="updateLoss(this.value)" aria-label="Estimated Loss Percentage" />
+      <div class="loss-display" id="lossValue">40%</div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-s" onclick="reportStep(2)">‹ वापस</button>
+      <button class="btn-p" onclick="submitReport()" id="step3Btn">
+        🤖 <span id="step3BtnTxt">AI विश्लेषण / Analyse</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Step 4: AI Analysis Result ── -->
+  <div class="rstep" id="rstep-4">
+    <div class="ai-result-container">
+
+      <!-- LOADING STATE -->
+      <div id="aiSpinner" class="ai-spinner-box" role="status" aria-live="polite">
+        <div class="ai-ring"></div>
+        <p class="ai-spin-txt" id="aiAnalyzingText">
+          🤖 AI विश्लेषण हो रहा है...<br/>
+          <small>फसल की पहचान · नुकसान का पता · पात्रता जाँच</small>
+        </p>
+        <canvas id="spin-wave" width="240" height="48" style="display:block;margin:16px auto;border-radius:10px;background:rgba(46,125,50,.06)"></canvas>
+      </div>
+
+      <!-- RESULT PANEL (hidden until ready) -->
+      <div id="aiResultPanel" style="display:none">
+
+        <!-- ── A: CLAIM ELIGIBLE ── -->
+        <div id="resultEligible" style="display:none">
+          <div class="ai-eligible-card">
+            <div class="ai-elig-icon">🚨</div>
+            <div class="ai-elig-title" id="resultTitle">दावा दर्ज करें!</div>
+            <div class="ai-elig-sub" id="elig-sub-txt"></div>
+            <div class="claim-id-box">
+              <span class="claim-id-lbl" id="claimIdLabel">दावा ID / Claim ID</span>
+              <span class="claim-id-val" id="claimIdVal">—</span>
+            </div>
+            <div class="ai-stats" id="ai-stats-eligible"></div>
+            <div class="damage-card">
+              <div class="damage-heading" id="aiHeading">AI आकलन / AI Assessment</div>
+              <div id="damageBars"></div>
+              <div class="sat-chip" id="satChipElig">🛰️ Sentinel-2 · NDVI: —</div>
+            </div>
+            <div class="recs-list" id="recsListEligible"></div>
+            <button class="btn-p red" onclick="confirmClaim()" id="confirmClaimBtn">
+              ✅ दावा पक्का करें / Confirm Claim
+            </button>
+            <button class="btn-s" onclick="reportStep(3)">‹ फोटो बदलें / Change Photo</button>
+            <button class="btn-s" onclick="goTo('s-claims')" id="viewClaimBtn" style="margin-top:8px">
+              📋 दावे देखें / View Claims
+            </button>
+          </div>
+        </div>
+
+        <!-- ── B: NO DAMAGE / HEALTHY CROP ── -->
+        <div id="resultHealthy" style="display:none">
+          <div class="ai-healthy-card">
+            <div class="ai-hlth-icon">✅</div>
+            <div class="ai-hlth-title" id="healthy-title">फसल स्वस्थ है!</div>
+            <div class="ai-hlth-msg" id="healthy-msg"></div>
+            <div class="ai-stats" id="ai-stats-healthy"></div>
+            <div class="recs-list" id="recsListHealthy"></div>
+            <button class="btn-p" onclick="goTo('s-home')" id="homeBtn2">🏠 होम / Home</button>
+            <button class="btn-s" onclick="reportStep(3)">📷 दूसरी फोटो / Try Another Photo</button>
+          </div>
+        </div>
+
+        <!-- ── C: NO CROP DETECTED ── -->
+        <div id="resultNoCrop" style="display:none">
+          <div class="ai-nocrop-card">
+            <div class="ai-nocrop-icon">🤷</div>
+            <div class="ai-nocrop-title" id="nocrop-title">फसल नहीं मिली</div>
+            <div class="ai-nocrop-msg" id="nocrop-msg"></div>
+            <button class="btn-p" onclick="reportStep(3)">📷 फिर से कोशिश करें / Try Again</button>
+            <button class="btn-s" onclick="goTo('s-home')">🏠 होम / Home</button>
+          </div>
+        </div>
+
+      </div><!-- /aiResultPanel -->
+    </div>
+  </div><!-- /rstep-4 -->
+</div><!-- /s-report -->
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN 4 — MY CLAIMS
+═══════════════════════════════════════════════ -->
+<div id="s-claims" class="screen" aria-label="My Claims">
+  <div class="page-header">
+    <button class="back-btn" onclick="goBack()">‹</button>
+    <span class="ph-title" id="claimsTitle">📋 मेरे दावे / My Claims</span>
+    <button class="ph-mic" onclick="screenVoiceListen('claims')">🎤</button>
+  </div>
+  <div class="claims-container" id="claimsList"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN 5 — REGISTER CROP
+═══════════════════════════════════════════════ -->
+<div id="s-register" class="screen" aria-label="Register Crop">
+  <div class="page-header">
+    <button class="back-btn" onclick="goBack()">‹</button>
+    <span class="ph-title" id="cropRegTitle">🌱 फसल दर्ज करें</span>
+    <button class="ph-mic" onclick="screenVoiceListen('register')">🎤</button>
+  </div>
+  <div class="reg-body">
+    <div class="rstep-head" id="seasonLabel" style="padding-left:0;margin-bottom:12px">🌦️ मौसम / Season</div>
+    <div class="season-toggle">
+      <button class="season-btn active" onclick="selectSeason('kharif',this)" id="kharifBtn">☔ खरीफ</button>
+      <button class="season-btn" onclick="selectSeason('rabi',this)" id="rabiBtn">❄️ रबी</button>
+      <button class="season-btn" onclick="selectSeason('zaid',this)" id="zaidBtn">☀️ जायद</button>
+    </div>
+
+    <div class="rstep-head" id="cropTypeLabel" style="padding-left:0;margin:18px 0 12px">🌾 फसल का प्रकार / Crop Type</div>
+    <div class="crop-pick" id="cropRegGrid"></div>
+
+    <div class="form-grp" style="margin-top:18px">
+      <label class="form-lbl" id="sowingLabel" for="sowingDate">📅 बुवाई तारीख / Sowing Date</label>
+      <input class="form-input" type="date" id="sowingDate" aria-label="Sowing Date" />
+    </div>
+
+    <div class="form-grp">
+      <label class="form-lbl" for="sumInsured">💰 बीमित राशि / Sum Insured (₹)</label>
+      <input class="form-input" type="number" id="sumInsured" placeholder="e.g. 50000" aria-label="Sum Insured" />
+    </div>
+
+    <div class="form-grp">
+      <label class="form-lbl" for="farmerName">👤 किसान का नाम / Farmer Name</label>
+      <input class="form-input" type="text" id="farmerName" placeholder="पूरा नाम / Full name" aria-label="Farmer Name" />
+    </div>
+
+    <div class="form-grp">
+      <label class="form-lbl" for="khasraReg">📄 खसरा नंबर / Khasra No.</label>
+      <input class="form-input" type="text" id="khasraReg" placeholder="e.g. 245/2" aria-label="Khasra Number" />
+    </div>
+
+    <button class="btn-p" onclick="registerCrop()">✅ <span id="regSubmitTxt">फसल दर्ज करें / Register Crop</span></button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN 6 — ADVISORY
+═══════════════════════════════════════════════ -->
+<div id="s-advisory" class="screen" aria-label="Advisory">
+  <div class="page-header">
+    <button class="back-btn" onclick="goBack()">‹</button>
+    <span class="ph-title" id="advisoryTitle">🧑‍🌾 सलाह / Advisory</span>
+    <button class="ph-mic" onclick="screenVoiceListen('advisory')">🎤</button>
+  </div>
+  <div class="advisory-list" id="advisoryList"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN 7 — HELPLINE
+═══════════════════════════════════════════════ -->
+<div id="s-helpline" class="screen" aria-label="Helpline">
+  <div class="page-header">
+    <button class="back-btn" onclick="goBack()">‹</button>
+    <span class="ph-title" id="helplineTitle">📞 हेल्पलाइन / Helpline</span>
+  </div>
+  <div class="hl-list">
+    <div class="hl-card">
+      <span class="hl-ico">🏛️</span>
+      <div class="hl-info">
+        <div class="hl-name" id="hl1Name">PMFBY Helpline</div>
+        <a class="hl-num" href="tel:18001801551">1800-180-1551</a>
+        <div class="hl-hrs">सोम–शनि 6AM–10PM · Mon–Sat</div>
+      </div>
+      <a class="call-btn" href="tel:18001801551" aria-label="Call PMFBY">📞</a>
+    </div>
+    <div class="hl-card">
+      <span class="hl-ico">🌾</span>
+      <div class="hl-info">
+        <div class="hl-name" id="hl2Name">किसान कॉल सेंटर</div>
+        <a class="hl-num" href="tel:1551">1551</a>
+        <div class="hl-hrs">24×7 Available · सभी भाषाओं में</div>
+      </div>
+      <a class="call-btn" href="tel:1551" aria-label="Call Kisan Call Centre">📞</a>
+    </div>
+    <div class="hl-card">
+      <span class="hl-ico">🏦</span>
+      <div class="hl-info">
+        <div class="hl-name" id="hl3Name">बैंक ऑफ इंडिया – कृषि</div>
+        <a class="hl-num" href="tel:18001037788">1800-103-7788</a>
+        <div class="hl-hrs">सोम–शु 9AM–6PM</div>
+      </div>
+      <a class="call-btn" href="tel:18001037788" aria-label="Call Bank of India">📞</a>
+    </div>
+    <div class="wa-card">
+      <span class="wa-icon">💬</span>
+      <div>
+        <div class="wa-title" id="waTitle">WhatsApp पर मदद</div>
+        <div class="wa-sub" id="waSub">'HELP' भेजें 9999-FASAL को</div>
+      </div>
+      <a class="wa-btn" href="https://wa.me/919999FASAL" target="_blank" aria-label="WhatsApp Help">WhatsApp</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN 8 — SATELLITE MAP
+═══════════════════════════════════════════════ -->
+<div id="s-satellite" class="screen" aria-label="Satellite Map">
+  <div class="page-header">
+    <button class="back-btn" onclick="goBack()">‹</button>
+    <span class="ph-title" id="satTitle">🛰️ सैटेलाइट मैप</span>
+  </div>
+  <div class="sat-view">
+    <div class="sat-toggle" role="tablist">
+      <button class="sat-tab active" role="tab" onclick="switchSatTab('ndvi',this)">NDVI</button>
+      <button class="sat-tab" role="tab" onclick="switchSatTab('rgb',this)">RGB</button>
+      <button class="sat-tab" role="tab" onclick="switchSatTab('sar',this)">SAR</button>
+    </div>
+    <div class="sat-map-wrap" role="img" aria-label="Satellite Map">
+      <div class="sat-grad ndvi" id="satGrad"></div>
+      <div class="sat-label" id="satMapLabel">NDVI – फसल स्वास्थ्य मानचित्र</div>
+      <div class="sat-legend">
+        <div class="leg-item"><div class="leg-dot g"></div><span id="healthyLabel">स्वस्थ</span></div>
+        <div class="leg-item"><div class="leg-dot o"></div><span id="moderateLabel">मध्यम</span></div>
+        <div class="leg-item"><div class="leg-dot r"></div><span id="severeLabel">गंभीर</span></div>
+      </div>
+    </div>
+    <div class="sat-stats">
+      <div class="stat-box"><div class="stat-num" id="satHlth">68%</div><div class="stat-lbl" id="healthyLabel2">स्वस्थ क्षेत्र</div></div>
+      <div class="stat-box"><div class="stat-num" id="satMod" style="color:var(--amber)">19%</div><div class="stat-lbl" id="moderateLabel2">मध्यम</div></div>
+      <div class="stat-box"><div class="stat-num" id="satSev" style="color:var(--red)">13%</div><div class="stat-lbl" id="severeLabel2">गंभीर</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── BOTTOM NAVIGATION ─── -->
+<div id="bottom-nav" role="navigation" aria-label="Bottom Navigation">
+  <div class="bnav-inner">
+    <button class="nav-item active" id="bnav-home" onclick="goTo('s-home')" aria-label="Home">
+      <span class="nav-ico">🏠</span>
+      <span data-key="navHome">होम</span>
+    </button>
+    <button class="nav-item" id="bnav-report" onclick="goTo('s-report')" aria-label="Report">
+      <span class="nav-ico">📸</span>
+      <span data-key="navReport">रिपोर्ट</span>
+    </button>
+    <button class="nav-item" id="bnav-claims" onclick="goTo('s-claims')" aria-label="Claims">
+      <span class="nav-ico">📋</span>
+      <span data-key="navClaims">दावे</span>
+    </button>
+    <button class="nav-item" id="bnav-advisory" onclick="goTo('s-advisory')" aria-label="Advisory">
+      <span class="nav-ico">🧑‍🌾</span>
+      <span data-key="navAdvisory">सलाह</span>
+    </button>
+  </div>
+</div>
+
+<!-- Global voice bubble -->
+<div class="voice-bubble" id="voice-bubble"></div>
+
+<!-- ═══════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════ -->
+<script src="ai-engine.js"></script>
+<script src="voice-engine.js"></script>
+<script>
+/* ════════════════════════════════════════════════
+   APP STATE
+════════════════════════════════════════════════ */
+const STATE = {
+  lang:         'hi',
+  screen:       's-lang',
+  history:      [],
+  selectedCrop: null,
+  selectedCause:null,
+  selectedSeason:'kharif',
+  affectedArea: 2.0,
+  uploadedFiles:[],
+  lastAIResult: null,
+  pendingClaimId: null,
+  isRecording:  false,
+  voiceEngine:  null,
+  waveVis:      null,
+};
+
+/* ════════════════════════════════════════════════
+   TRANSLATION DATA  (Bilingual: hi + en)
+════════════════════════════════════════════════ */
+const TR = {
+  hi:{
+    greeting:'नमस्ते, किसान!',
+    reportDamage:'नुकसान रिपोर्ट',   myClaims:'मेरे दावे',
+    cropRegister:'फसल दर्ज करें',    advisory:'सलाह',
+    helpline:'हेल्पलाइन',            satellite:'सैटेलाइट मैप',
+    navHome:'होम', navReport:'रिपोर्ट', navClaims:'दावे', navAdvisory:'सलाह',
+    weatherAlert:'⚠️ भारी बारिश 2 दिन में',
+    schemeInfo:'दावा खिड़की खुली · खरीफ 2025',
+    reportTitle:'📸 नुकसान रिपोर्ट करें',
+    stepLabel1:'🌾 फसल चुनें / Select Crop',
+    stepLabel2:'⚠️ नुकसान का कारण / Cause',
+    photoLabel:'📷 फोटो खींचें / Upload Photo',
+    photoUploadText:'फोटो लें / Upload',
+    photoHint:'📌 AI फसल की पहचान और नुकसान का पता लगाएगा',
+    voiceLabel:'🎙️ आवाज़ में बताएं / Describe by Voice',
+    voiceBtnText:'बोलना शुरू करें', voiceBtnStop:'रोकें / Stop',
+    landLabel:'🗺️ भूमि विवरण / Land Details',
+    khasraLabel:'खसरा नंबर / Khasra No.', areaLabel:'कितने बीघे / Affected Area',
+    lossLabel:'अनुमानित नुकसान % / Estimated Loss %',
+    aiAnalyzingText:'🤖 AI विश्लेषण हो रहा है...',
+    resultTitle:'🚨 दावा दर्ज हो गया!',
+    claimIdLabel:'दावा ID / Claim ID',
+    aiHeading:'AI आकलन / AI Assessment',
+    claimsTitle:'📋 मेरे दावे',
+    cropRegTitle:'🌱 फसल दर्ज करें',
+    seasonLabel:'🌦️ मौसम / Season', cropTypeLabel:'🌾 फसल का प्रकार',
+    sowingLabel:'📅 बुवाई तारीख / Sowing Date',
+    advisoryTitle:'🧑‍🌾 सलाह / Advisory',
+    helplineTitle:'📞 हेल्पलाइन',
+    hl1Name:'PMFBY हेल्पलाइन', hl2Name:'किसान कॉल सेंटर', hl3Name:'बैंक ऑफ इंडिया – कृषि',
+    waTitle:'WhatsApp पर मदद', waSub:"'HELP' भेजें 9999-FASAL को",
+    satTitle:'🛰️ सैटेलाइट मैप', satMapLabel:'NDVI – फसल स्वास्थ्य मानचित्र',
+    healthyLabel:'स्वस्थ', moderateLabel:'मध्यम', severeLabel:'गंभीर',
+    step1Btn:'आगे → Next', step2Btn:'आगे → Next',
+    step3BtnTxt:'AI विश्लेषण / Analyse',
+    homeBtn2:'🏠 होम / Home',
+    viewClaimBtn:'📋 दावे देखें / View Claims',
+    confirmClaimBtn:'✅ दावा पक्का करें / Confirm Claim',
+    regSubmitTxt:'फसल दर्ज करें / Register Crop',
+    step2VoiceTxt:'कारण बोलें / Say Cause',
+    ndvi_lbl:'NDVI स्कोर: 0.72',
+    wc_desc:'आंशिक बादल · Partly Cloudy',
+  },
+  en:{
+    greeting:'Hello, Farmer!',
+    reportDamage:'Report Damage',       myClaims:'My Claims',
+    cropRegister:'Register Crop',       advisory:'Advisory',
+    helpline:'Helpline',                satellite:'Satellite Map',
+    navHome:'Home', navReport:'Report', navClaims:'Claims', navAdvisory:'Advisory',
+    weatherAlert:'⚠️ Heavy rain in 2 days',
+    schemeInfo:'Claim window open · Kharif 2025',
+    reportTitle:'📸 Report Damage',
+    stepLabel1:'🌾 Select Crop',
+    stepLabel2:'⚠️ Cause of Damage',
+    photoLabel:'📷 Upload Photo of Crop',
+    photoUploadText:'Take Photo / Upload',
+    photoHint:'📌 AI will detect crop presence and assess damage',
+    voiceLabel:'🎙️ Describe Damage by Voice',
+    voiceBtnText:'Start Speaking', voiceBtnStop:'Stop Recording',
+    landLabel:'🗺️ Land Details',
+    khasraLabel:'Khasra No.', areaLabel:'Affected Area (Bigha)',
+    lossLabel:'Estimated Loss %',
+    aiAnalyzingText:'🤖 AI Analysis in progress...',
+    resultTitle:'🚨 Claim Registered!',
+    claimIdLabel:'Claim ID',
+    aiHeading:'AI Assessment',
+    claimsTitle:'📋 My Claims',
+    cropRegTitle:'🌱 Register Crop',
+    seasonLabel:'🌦️ Season', cropTypeLabel:'🌾 Crop Type',
+    sowingLabel:'📅 Sowing Date',
+    advisoryTitle:'🧑‍🌾 Advisory',
+    helplineTitle:'📞 Helpline',
+    hl1Name:'PMFBY Helpline', hl2Name:'Kisan Call Centre', hl3Name:'Bank of India – Agri',
+    waTitle:'WhatsApp Help', waSub:"Send 'HELP' to 9999-FASAL",
+    satTitle:'🛰️ Satellite Map', satMapLabel:'NDVI – Crop Health Map',
+    healthyLabel:'Healthy', moderateLabel:'Moderate', severeLabel:'Severe',
+    step1Btn:'Next →', step2Btn:'Next →',
+    step3BtnTxt:'Analyse with AI',
+    homeBtn2:'🏠 Home',
+    viewClaimBtn:'📋 View My Claims',
+    confirmClaimBtn:'✅ Confirm Claim',
+    regSubmitTxt:'Register Crop',
+    step2VoiceTxt:'Say Damage Cause',
+    ndvi_lbl:'NDVI Score: 0.72',
+    wc_desc:'Partly Cloudy',
+  },
+};
+
+/* ════════════════════════════════════════════════
+   CROPS & CAUSES
+════════════════════════════════════════════════ */
+const CROPS_UI = [
+  {key:'wheat',    e:'🌾', hi:'गेहूं',     en:'Wheat'},
+  {key:'rice',     e:'🌾', hi:'धान',       en:'Rice'},
+  {key:'maize',    e:'🌽', hi:'मक्का',     en:'Maize'},
+  {key:'soybean',  e:'🌱', hi:'सोयाबीन',  en:'Soybean'},
+  {key:'groundnut',e:'🥜', hi:'मूंगफली',  en:'Groundnut'},
+  {key:'cotton',   e:'🌿', hi:'कपास',     en:'Cotton'},
+  {key:'onion',    e:'🧅', hi:'प्याज',    en:'Onion'},
+  {key:'sugarcane',e:'🎋', hi:'गन्ना',    en:'Sugarcane'},
+];
+const CAUSES_UI = [
+  {key:'flood',   e:'🌊', hi:'बाढ़',        en:'Flood'},
+  {key:'drought', e:'☀️',  hi:'सूखा',       en:'Drought'},
+  {key:'hail',    e:'🌨️', hi:'ओलावृष्टि', en:'Hail'},
+  {key:'fire',    e:'🔥', hi:'आग',          en:'Fire'},
+  {key:'pest',    e:'🐛', hi:'कीट',         en:'Pest'},
+  {key:'cyclone', e:'🌀', hi:'चक्रवात',    en:'Cyclone'},
+];
+const SAMPLE_CLAIMS = [
+  {crop:'🌾',name_hi:'गेहूं – बाढ़',  name_en:'Wheat – Flood',   date:'15 Mar 2025',amount:'₹28,500',status:'approved'},
+  {crop:'🌽',name_hi:'मक्का – ओले',   name_en:'Maize – Hail',    date:'8 Jan 2025', amount:'₹14,200',status:'pending'},
+  {crop:'🌿',name_hi:'कपास – कीट',    name_en:'Cotton – Pest',   date:'20 Nov 2024',amount:'₹42,000',status:'reviewing'},
+];
+const ADVISORY_DATA = [
+  {type:'alert',  tag:'⚠️ मौसम चेतावनी',   title_hi:'भारी बारिश की चेतावनी',  title_en:'Heavy Rainfall Warning',    desc_hi:'IMD ने अगले 48 घंटों में 80mm बारिश की भविष्यवाणी की।', desc_en:'IMD forecasts 80mm rainfall in next 48hrs.',        date:'14 Apr 2026'},
+  {type:'warning',tag:'🐛 कीट सलाह',         title_hi:'मक्के में फॉल आर्मीवर्म',title_en:'Fall Armyworm in Maize',    desc_hi:'3 जिलों में कीट पाए गए। 72 घंटों में कीटनाशक लगाएं।',  desc_en:'Pest detected in 3 districts. Apply pesticide in 72hrs.',date:'12 Apr 2026'},
+  {type:'',       tag:'🌱 कृषि टिप',         title_hi:'सर्वोत्तम सिंचाई समय',   title_en:'Optimal Irrigation Schedule',desc_hi:'ड्रिप सिंचाई से 40% पानी बचाएं।',                 desc_en:'Use drip irrigation to reduce water usage by 40%.',  date:'10 Apr 2026'},
+  {type:'',       tag:'💰 योजना अलर्ट',       title_hi:'PM किसान 19वीं किस्त',    title_en:'PM Kisan 19th Installment', desc_hi:'₹2000 अप्रैल 15 को खाते में आएगा। आधार-बैंक लिंक करें।',desc_en:'₹2000 will be credited on April 15.',             date:'9 Apr 2026'},
+];
+
+/* Languages on splash screen */
+const LANG_OPTS = [
+  {code:'hi', f:'🇮🇳', n:'हिंदी',   s:'Hindi'},
+  {code:'en', f:'🌐',  n:'English',  s:'English'},
+  
+];
+
+/* ════════════════════════════════════════════════
+   BOOT
+════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  // Init voice engine
+  STATE.voiceEngine = new VoiceEngine();
+  STATE.voiceEngine.setLanguage('hi');
+  STATE.voiceEngine.onTranscript = (txt, isFinal) => {
+    VoiceUI.showTranscript(txt, isFinal);
+  };
+  STATE.voiceEngine.onStateChange = (s) => {
+    updateAllMicButtons(s);
+  };
+  STATE.voiceEngine.onCommand = handleVoiceCommand;
+
+  // Init waveform
+  STATE.waveVis = new WaveformVisualiser('waveform-canvas');
+
+  // Render grids
+  renderLangGrid();
+  renderCropGrid('cropGrid');
+  renderCropGrid('cropRegGrid');
+  renderCauseGrid();
+  renderClaims();
+  renderAdvisory();
+  applyTranslations('hi');
+
+  // Speak welcome after short delay
+  setTimeout(() => {
+    STATE.voiceEngine.speak('welcome').catch(()=>{});
+  }, 1200);
+});
+
+/* ════════════════════════════════════════════════
+   LANGUAGE GRID
+════════════════════════════════════════════════ */
+function renderLangGrid() {
+  const g = document.getElementById('langGrid');
+  g.innerHTML = LANG_OPTS.map(l => `
+    <button class="lang-opt${l.code==='hi'?' sel':''}" id="lo-${l.code}"
+      onclick="selectLang('${l.code}')" aria-label="Select ${l.s} language">
+      <span class="lf">${l.f}</span>
+      <div class="ln">${l.n}</div>
+      <div class="lsub">${l.s}</div>
+    </button>
+  `).join('');
+}
+
+function selectLang(code) {
+  document.querySelectorAll('.lang-opt').forEach(e => e.classList.remove('sel'));
+  const el = document.getElementById(`lo-${code}`);
+  if (el) el.classList.add('sel');
+  STATE.lang = code;
+  STATE.voiceEngine.setLanguage(code);
+  applyTranslations(code);
+}
+
+function enterApp() {
+  goTo('s-home');
+  document.getElementById('bottom-nav').style.display = 'block';
+  STATE.voiceEngine.speak('home').catch(()=>{});
+}
+
+/* ════════════════════════════════════════════════
+   APPLY TRANSLATIONS
+════════════════════════════════════════════════ */
+function applyTranslations(lang) {
+  const T = TR[lang] || TR['hi'];
+  // data-key elements
+  document.querySelectorAll('[data-key]').forEach(el => {
+    const k = el.getAttribute('data-key');
+    if (T[k]) el.textContent = T[k];
+  });
+  // Specific IDs
+  const set = (id, key) => { const e = document.getElementById(id); if (e && T[key] !== undefined) e.textContent = T[key]; };
+  Object.keys(T).forEach(k => set(k, k));  // id == key shorthand
+
+  // Update topbar greeting & avatar
+  set('homeGreeting', 'greeting');
+  set('wc-desc', 'wc_desc');
+  set('wc-alert', 'weatherAlert');
+  set('schemeInfo', 'schemeInfo');
+  // Nav
+  document.querySelectorAll('[data-key="navHome"]').forEach(e => e.textContent = T.navHome);
+  document.querySelectorAll('[data-key="navReport"]').forEach(e => e.textContent = T.navReport);
+  document.querySelectorAll('[data-key="navClaims"]').forEach(e => e.textContent = T.navClaims);
+  document.querySelectorAll('[data-key="navAdvisory"]').forEach(e => e.textContent = T.navAdvisory);
+
+  const langBtn = document.getElementById('homeLangBtn');
+  if (langBtn) langBtn.textContent = lang === 'en' ? 'EN' : lang === 'hi' ? 'हि' : lang.toUpperCase().slice(0,2);
+
+  // Re-render grids so labels update
+  renderCropGrid('cropGrid');
+  renderCropGrid('cropRegGrid');
+  renderCauseGrid();
+  renderClaims();
+  renderAdvisory();
+}
+
+function quickLangToggle() {
+  const next = STATE.lang === 'hi' ? 'en' : 'hi';
+  selectLang(next);
+  showToast(next === 'hi' ? '🇮🇳 हिंदी चुनी गई' : '🌐 English selected');
+}
+
+/* ════════════════════════════════════════════════
+   NAVIGATION
+════════════════════════════════════════════════ */
+function goTo(screenId) {
+  if (STATE.screen !== 's-lang') STATE.history.push(STATE.screen);
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  STATE.screen = screenId;
+  updateBottomNavHighlight(screenId);
+  if (screenId === 's-report') { reportStep(1); }
+  // Scroll to top
+  const el = document.getElementById(screenId);
+  if (el) el.scrollTop = 0;
+}
+
+function goBack() {
+  if (STATE.history.length > 0) {
+    const prev = STATE.history.pop();
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(prev).classList.add('active');
+    STATE.screen = prev;
+    updateBottomNavHighlight(prev);
+  } else {
+    goTo('s-home');
+  }
+}
+
+function updateBottomNavHighlight(screenId) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const map = {'s-home':'bnav-home','s-report':'bnav-report','s-claims':'bnav-claims','s-advisory':'bnav-advisory'};
+  if (map[screenId]) { const b = document.getElementById(map[screenId]); if (b) b.classList.add('active'); }
+}
+
+/* ════════════════════════════════════════════════
+   REPORT STEPS
+════════════════════════════════════════════════ */
+function reportStep(n) {
+  document.querySelectorAll('.rstep').forEach(s => s.classList.remove('active'));
+  const step = document.getElementById(`rstep-${n}`);
+  if (step) step.classList.add('active');
+  // Update progress dots
+  for (let i = 1; i <= 4; i++) {
+    const dot = document.getElementById(`sp${i}`);
+    if (!dot) continue;
+    dot.classList.remove('active','done');
+    if (i < n) dot.classList.add('done');
+    if (i === n) dot.classList.add('active');
+  }
+  if (n === 4) runAIAnalysis();
+}
+
+/* ════════════════════════════════════════════════
+   CROP & CAUSE GRIDS
+════════════════════════════════════════════════ */
+function renderCropGrid(containerId) {
+  const g = document.getElementById(containerId);
+  if (!g) return;
+  g.innerHTML = CROPS_UI.map((c, i) => `
+    <button class="crop-btn" id="${containerId}-${i}" onclick="selectCrop('${containerId}',${i},'${c.key}')"
+      aria-label="Select ${c.en}">
+      <span class="cb-emoji">${c.e}</span>
+      <span class="cb-name">${STATE.lang === 'en' ? c.en : c.hi}</span>
+    </button>
+  `).join('');
+}
+
+function selectCrop(containerId, idx, key) {
+  document.querySelectorAll(`#${containerId} .crop-btn`).forEach(b => b.classList.remove('sel'));
+  const btn = document.getElementById(`${containerId}-${idx}`);
+  if (btn) btn.classList.add('sel');
+  if (containerId === 'cropGrid') {
+    STATE.selectedCrop = CROPS_UI[idx];
+    const T = TR[STATE.lang] || TR.hi;
+    showToast(`${CROPS_UI[idx].e} ${STATE.lang === 'en' ? CROPS_UI[idx].en : CROPS_UI[idx].hi} ✓`);
+    STATE.voiceEngine.speak('crop_selected', [STATE.lang === 'en' ? CROPS_UI[idx].en : CROPS_UI[idx].hi]).catch(()=>{});
+  }
+}
+
+function renderCauseGrid() {
+  const g = document.getElementById('causeGrid');
+  if (!g) return;
+  g.innerHTML = CAUSES_UI.map((c, i) => `
+    <button class="cause-btn" id="cause-${i}" onclick="selectCause(${i},'${c.key}')"
+      aria-label="Select ${c.en}">
+      <span class="cau-emoji">${c.e}</span>
+      <span class="cau-name">${STATE.lang === 'en' ? c.en : c.hi}</span>
+    </button>
+  `).join('');
+}
+
+function selectCause(idx, key) {
+  document.querySelectorAll('.cause-btn').forEach(b => b.classList.remove('sel'));
+  const btn = document.getElementById(`cause-${idx}`);
+  if (btn) btn.classList.add('sel');
+  STATE.selectedCause = CAUSES_UI[idx];
+  showToast(`${CAUSES_UI[idx].e} ${STATE.lang === 'en' ? CAUSES_UI[idx].en : CAUSES_UI[idx].hi} ✓`);
+  STATE.voiceEngine.speak('cause_selected', [STATE.lang === 'en' ? CAUSES_UI[idx].en : CAUSES_UI[idx].hi]).catch(()=>{});
+}
+
+/* ════════════════════════════════════════════════
+   CLAIMS LIST
+════════════════════════════════════════════════ */
+function renderClaims() {
+  const list = document.getElementById('claimsList');
+  if (!list) return;
+  const stored = ClaimsStore.getAll();
+  const all = [...stored, ...SAMPLE_CLAIMS];
+  if (all.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-m)">📭 कोई दावा नहीं / No claims yet</div>';
+    return;
+  }
+  const badgeMap = {approved:'badge-approved',pending:'badge-pending',reviewing:'badge-reviewing',rejected:'badge-rejected'};
+  const labelMap = {
+    approved: STATE.lang === 'en' ? 'Approved' : 'स्वीकृत',
+    pending:  STATE.lang === 'en' ? 'Pending'  : 'लंबित',
+    reviewing:STATE.lang === 'en' ? 'In Review': 'समीक्षाधीन',
+    rejected: STATE.lang === 'en' ? 'Rejected'  : 'अस्वीकृत',
+  };
+  list.innerHTML = all.map(c => `
+    <div class="claim-card" role="listitem">
+      <div class="cc-crop">${c.crop}</div>
+      <div class="cc-info">
+        <div class="cc-name">${STATE.lang === 'en' ? (c.name_en||c.name||'') : (c.name_hi||c.name||'')}</div>
+        <div class="cc-date">${c.date}</div>
+        <div class="cc-amount">${c.amount}</div>
+      </div>
+      <span class="badge ${badgeMap[c.status]||'badge-pending'}">${labelMap[c.status]||c.status}</span>
+    </div>
+  `).join('');
+}
+
+/* ════════════════════════════════════════════════
+   ADVISORY LIST
+════════════════════════════════════════════════ */
+function renderAdvisory() {
+  const list = document.getElementById('advisoryList');
+  if (!list) return;
+  list.innerHTML = ADVISORY_DATA.map(a => `
+    <div class="advisory-card ${a.type}" role="article">
+      <div class="adv-tag">${a.tag}</div>
+      <div class="adv-title">${STATE.lang === 'en' ? a.title_en : a.title_hi}</div>
+      <div class="adv-desc">${STATE.lang === 'en' ? a.desc_en : a.desc_hi}</div>
+      <div class="adv-date">${a.date}</div>
+    </div>
+  `).join('');
+}
+
+/* ════════════════════════════════════════════════
+   PHOTO UPLOAD + DRAG & DROP
+════════════════════════════════════════════════ */
+function handlePhotoUpload(e) {
+  addFiles(Array.from(e.target.files));
+}
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropZone').classList.remove('drag-over');
+  addFiles(Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')));
+}
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById('dropZone').classList.add('drag-over');
+}
+function handleDragLeave() {
+  document.getElementById('dropZone').classList.remove('drag-over');
+}
+function addFiles(files) {
+  STATE.uploadedFiles = [...STATE.uploadedFiles, ...files];
+  const preview = document.getElementById('photoPreview');
+  files.forEach(file => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.src = url; img.className = 'thumb'; img.alt = 'Crop photo';
+    img.onclick = () => window.open(url, '_blank');
+    preview.appendChild(img);
+  });
+  showToast(`📷 ${files.length} ${STATE.lang === 'en' ? 'photo(s) added' : 'फोटो जोड़ी'}`);
+  STATE.voiceEngine.speak('photo_prompt').catch(()=>{});
+}
+
+/* ════════════════════════════════════════════════
+   SUBMIT REPORT  →  AI ANALYSIS
+════════════════════════════════════════════════ */
+function submitReport() {
+  if (!STATE.selectedCrop) {
+    showToast(STATE.lang === 'en' ? '⚠️ Please select a crop first' : '⚠️ पहले फसल चुनें');
+    return;
+  }
+  reportStep(4);
+}
+
+async function runAIAnalysis() {
+  // Show spinner
+  document.getElementById('aiSpinner').style.display = 'block';
+  document.getElementById('aiResultPanel').style.display = 'none';
+
+  // Animate spinner waveform
+  const spinWave = new WaveformVisualiser('spin-wave');
+  spinWave.start('#4CAF50');
+
+  STATE.voiceEngine.speak('analyzing').catch(()=>{});
+
+  try {
+    let result;
+    if (STATE.uploadedFiles.length > 0) {
+      // Use the real AI engine with the uploaded image
+      result = await AIEngine.analyzeImage(
+        STATE.uploadedFiles[STATE.uploadedFiles.length - 1],
+        STATE.selectedCrop?.key,
+        STATE.selectedCause?.key,
+      );
+    } else {
+      // Demo mode: simulate a result (damage present)
+      await sleep(3000);
+      result = simulateDemoResult();
+    }
+
+    spinWave.stop();
+    STATE.lastAIResult = result;
+    displayAIResult(result);
+
+  } catch (err) {
+    spinWave.stop();
+    console.error('[AI]', err);
+    // Fallback demo result
+    const result = simulateDemoResult();
+    STATE.lastAIResult = result;
+    displayAIResult(result);
+  }
+}
+
+function simulateDemoResult() {
+  const crop = STATE.selectedCrop?.key || 'wheat';
+  const cause = STATE.selectedCause?.key || 'flood';
+  const dmgPct = 30 + Math.floor(Math.random() * 50);
+  const ndvi   = parseFloat((0.3 + Math.random() * 0.35).toFixed(2));
+  return {
+    cropDetected: true, cropType: crop, cropConfidence: 72 + Math.floor(Math.random()*20),
+    damageDetected: dmgPct >= 25, damageSeverity: dmgPct, damageType: cause,
+    ndviScore: ndvi, healthScore: Math.round((1 - dmgPct/100)*100),
+    claimEligible: dmgPct >= 25,
+    rejectionReason: dmgPct < 25 ? {code:'NO_DAMAGE',message_hi:'फसल स्वस्थ है।',message_en:'Crop appears healthy.'} : null,
+    estimatedLoss: dmgPct >= 25 ? (Math.floor(Math.random()*30000+10000)) : 0,
+    satelliteData: {
+      ndvi, ndvi_label: ndvi > 0.5 ? 'Moderate' : 'Stressed',
+      healthy_pct: Math.max(10, 100 - dmgPct - 10),
+      moderate_pct: Math.round(dmgPct * 0.3),
+      severe_pct: Math.round(dmgPct * 0.7),
+      gps_area: '24.52°N, 77.91°E',
+      sentinel_date: new Date().toLocaleDateString('en-IN'),
+    },
+    recommendations: [
+      {icon:'📋',text_hi:'दावा दर्ज करें।',text_en:'File your claim now.'},
+      {icon:'💧',text_hi:'जल निकासी करें।',text_en:'Arrange drainage.'},
+    ],
+    processingTime: 2800,
+  };
+}
+
+function displayAIResult(result) {
+  document.getElementById('aiSpinner').style.display = 'none';
+  document.getElementById('aiResultPanel').style.display = 'block';
+
+  // Hide all result panels
+  ['resultEligible','resultHealthy','resultNoCrop'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+
+  const T = TR[STATE.lang] || TR.hi;
+  const cropName = STATE.selectedCrop
+    ? (STATE.lang === 'en' ? STATE.selectedCrop.en : STATE.selectedCrop.hi)
+    : (result.cropType || 'फसल');
+  const causeName = STATE.selectedCause
+    ? (STATE.lang === 'en' ? STATE.selectedCause.en : STATE.selectedCause.hi)
+    : '';
+
+  if (!result.cropDetected || result.cropConfidence < 60) {
+    // ── NO CROP ──
+    document.getElementById('resultNoCrop').style.display = 'block';
+    document.getElementById('nocrop-title').textContent = STATE.lang === 'en' ? 'Crop Not Detected' : 'फसल नहीं मिली';
+    const msg = result.rejectionReason
+      ? (STATE.lang === 'en' ? result.rejectionReason.message_en : result.rejectionReason.message_hi)
+      : (STATE.lang === 'en' ? 'No crop was detected in the photo. Please upload a clearer photo close to your crop.' : 'फोटो में फसल की पहचान नहीं हो सकी। फसल के पास ली गई स्पष्ट फोटो अपलोड करें।');
+    document.getElementById('nocrop-msg').textContent = msg;
+    STATE.voiceEngine.speak('crop_not_found').catch(()=>{});
+
+  } else if (result.claimEligible) {
+    // ── ELIGIBLE ──
+    document.getElementById('resultEligible').style.display = 'block';
+    const claimId = generateClaimId(result.cropType);
+    STATE.pendingClaimId = claimId;
+    document.getElementById('claimIdVal').textContent = claimId;
+    document.getElementById('elig-sub-txt').textContent = STATE.lang === 'en'
+      ? `${result.damageSeverity}% ${causeName} damage detected in your ${cropName} crop. You are eligible for insurance compensation.`
+      : `आपकी ${cropName} फसल में ${result.damageSeverity}% ${causeName} का नुकसान पाया गया। आप बीमा मुआवज़े के पात्र हैं।`;
+
+    // Stats
+    document.getElementById('ai-stats-eligible').innerHTML = buildStats(result, T);
+
+    // Damage bars
+    const sd = result.satelliteData;
+    document.getElementById('damageBars').innerHTML = `
+      <div class="d-bar-row"><span>${T.lang === 'en' ? 'Healthy' : 'स्वस्थ'}</span>
+        <div class="d-track"><div class="d-fill green" style="width:${sd.healthy_pct}%"></div></div>
+        <span>${sd.healthy_pct}%</span></div>
+      <div class="d-bar-row"><span>${T.lang === 'en' ? 'Moderate' : 'मध्यम'}</span>
+        <div class="d-track"><div class="d-fill orange" style="width:${sd.moderate_pct}%"></div></div>
+        <span>${sd.moderate_pct}%</span></div>
+      <div class="d-bar-row"><span>${T.lang === 'en' ? 'Severe' : 'गंभीर'}</span>
+        <div class="d-track"><div class="d-fill red" style="width:${sd.severe_pct}%"></div></div>
+        <span>${sd.severe_pct}%</span></div>
+    `;
+    document.getElementById('satChipElig').textContent = `🛰️ Sentinel-2 · ${sd.sentinel_date} · NDVI: ${result.ndviScore}`;
+
+    // Recommendations
+    document.getElementById('recsListEligible').innerHTML = buildRecs(result);
+
+    STATE.voiceEngine.speak('damage_found', [result.damageSeverity]).catch(()=>{});
+
+  } else {
+    // ── HEALTHY / NO DAMAGE ──
+    document.getElementById('resultHealthy').style.display = 'block';
+    document.getElementById('healthy-title').textContent = STATE.lang === 'en' ? '✅ Crop is Healthy!' : '✅ फसल स्वस्थ है!';
+    const noMsg = result.rejectionReason
+      ? (STATE.lang === 'en' ? result.rejectionReason.message_en : result.rejectionReason.message_hi)
+      : (STATE.lang === 'en'
+        ? `Your ${cropName} crop shows only ${result.damageSeverity}% stress. No significant damage detected. Insurance claims are only for damaged crops.`
+        : `आपकी ${cropName} फसल में केवल ${result.damageSeverity}% तनाव पाया गया। कोई उल्लेखनीय नुकसान नहीं है। बीमा दावा केवल क्षतिग्रस्त फसलों के लिए होता है।`);
+    document.getElementById('healthy-msg').textContent = noMsg;
+    document.getElementById('ai-stats-healthy').innerHTML = buildStats(result, T);
+    document.getElementById('recsListHealthy').innerHTML = buildRecs(result);
+    STATE.voiceEngine.speak('no_damage').catch(()=>{});
+  }
+}
+
+function buildStats(result, T) {
+  const dmgColor = result.damageSeverity >= 50 ? 'stat-red' : result.damageSeverity >= 25 ? 'stat-amber' : 'stat-green';
+  const hlthColor = result.healthScore >= 60 ? 'stat-green' : result.healthScore >= 40 ? 'stat-amber' : 'stat-red';
+  return `
+    <div class="ai-stat">
+      <div class="ai-stat-val ${dmgColor}">${result.damageSeverity}%</div>
+      <div class="ai-stat-lbl">${STATE.lang === 'en' ? 'Damage' : 'नुकसान'}</div>
+    </div>
+    <div class="ai-stat">
+      <div class="ai-stat-val ${hlthColor}">${result.healthScore}%</div>
+      <div class="ai-stat-lbl">${STATE.lang === 'en' ? 'Health' : 'स्वास्थ्य'}</div>
+    </div>
+    <div class="ai-stat">
+      <div class="ai-stat-val" style="color:var(--blue);font-size:1.2rem">${result.ndviScore}</div>
+      <div class="ai-stat-lbl">NDVI Score</div>
+    </div>
+  `;
+}
+
+function buildRecs(result) {
+  if (!result.recommendations || result.recommendations.length === 0) return '';
+  return result.recommendations.map(r => `
+    <div class="rec-item">
+      <span class="rec-icon">${r.icon}</span>
+      <span class="rec-text">${STATE.lang === 'en' ? r.text_en : r.text_hi}</span>
+    </div>
+  `).join('');
+}
+
+function confirmClaim() {
+  if (!STATE.pendingClaimId || !STATE.lastAIResult) return;
+  const r = STATE.lastAIResult;
+  const cropName = STATE.selectedCrop
+    ? (STATE.lang === 'en' ? STATE.selectedCrop.en : STATE.selectedCrop.hi)
+    : r.cropType || 'Crop';
+  const causeName = STATE.selectedCause
+    ? (STATE.lang === 'en' ? STATE.selectedCause.en : STATE.selectedCause.hi)
+    : r.damageType || '';
+
+  const newClaim = {
+    crop: STATE.selectedCrop?.e || '🌾',
+    name_hi: `${STATE.selectedCrop?.hi || 'फसल'} – ${STATE.selectedCause?.hi || ''} – ${r.damageSeverity}%`,
+    name_en: `${STATE.selectedCrop?.en || 'Crop'} – ${causeName} – ${r.damageSeverity}%`,
+    date: new Date().toLocaleDateString('en-IN'),
+    amount: '₹' + (r.estimatedLoss || 0).toLocaleString('en-IN'),
+    status: 'pending',
+    claimId: STATE.pendingClaimId,
+  };
+  ClaimsStore.add(newClaim);
+  renderClaims();
+
+  showToast(STATE.lang === 'en' ? `✅ Claim Filed: ${STATE.pendingClaimId}` : `✅ दावा दर्ज: ${STATE.pendingClaimId}`);
+  STATE.voiceEngine.speak('claim_filed', [STATE.pendingClaimId]).catch(()=>{});
+
+  setTimeout(() => goTo('s-claims'), 2500);
+}
+
+/* ════════════════════════════════════════════════
+   AREA & LOSS CONTROLS
+════════════════════════════════════════════════ */
+function changeArea(delta) {
+  STATE.affectedArea = Math.max(0.5, Math.min(50, STATE.affectedArea + delta));
+  document.getElementById('areaValue').textContent = STATE.affectedArea.toFixed(1);
+}
+function updateLoss(val) {
+  document.getElementById('lossValue').textContent = val + '%';
+}
+
+/* ════════════════════════════════════════════════
+   VOICE — GLOBAL LISTENER
+════════════════════════════════════════════════ */
+async function globalVoiceListen() {
+  if (STATE.isRecording) { STATE.voiceEngine.stop(); return; }
+  STATE.isRecording = true;
+  const btn = document.getElementById('homeMic');
+  if (btn) btn.classList.add('listening');
+
+  try {
+    const {command, transcript} = await STATE.voiceEngine.listen();
+    handleVoiceCommand(command, transcript);
+  } catch(e) {
+    console.warn('[Voice]', e);
+    showToast(STATE.lang === 'en' ? '🎤 Voice not available in demo' : '🎤 डेमो में आवाज़ उपलब्ध नहीं');
+  } finally {
+    STATE.isRecording = false;
+    if (btn) btn.classList.remove('listening');
+  }
+}
+
+async function screenVoiceListen(screen) {
+  if (STATE.isRecording) { STATE.voiceEngine.stop(); return; }
+  STATE.isRecording = true;
+  try {
+    const {command, transcript} = await STATE.voiceEngine.listen();
+    handleVoiceCommand(command, transcript);
+  } catch(e) {
+    showToast(STATE.lang === 'en' ? '🎤 Voice feature active' : '🎤 आवाज़ सुविधा सक्रिय');
+  } finally {
+    STATE.isRecording = false;
+  }
+}
+
+// Step-specific mic
+async function stepVoiceListen(step) {
+  const micEl = step === 1 ? document.getElementById('step1Mic') : null;
+  const transcriptEl = document.getElementById(`step${step}Transcript`);
+  if (micEl) micEl.classList.add('recording');
+  STATE.isRecording = true;
+  STATE.waveVis.start('#2e7d32');
+
+  STATE.voiceEngine.onTranscript = (txt, isFinal) => {
+    if (transcriptEl) transcriptEl.textContent = txt;
+    VoiceUI.showTranscript(txt, isFinal);
+  };
+
+  try {
+    const {command, transcript} = await STATE.voiceEngine.listen();
+    if (transcriptEl) transcriptEl.textContent = transcript || '';
+    handleVoiceCommand(command, transcript);
+  } catch(e) {
+    if (transcriptEl) transcriptEl.textContent = STATE.lang === 'en' ? 'Voice not supported, tap to select.' : 'आवाज़ उपलब्ध नहीं, टैप करें।';
+  } finally {
+    if (micEl) micEl.classList.remove('recording');
+    STATE.isRecording = false;
+    STATE.waveVis.stop();
+    // Restore global transcript handler
+    STATE.voiceEngine.onTranscript = (txt, isFinal) => VoiceUI.showTranscript(txt, isFinal);
+  }
+}
+
+// Main voice button (step 3 description)
+function toggleMainVoice() {
+  const btn = document.getElementById('voiceBtn');
+  const txtEl = document.getElementById('voiceBtnText');
+  const transcript = document.getElementById('voiceTranscript');
+  const T = TR[STATE.lang] || TR.hi;
+
+  if (!STATE.isRecording) {
+    STATE.isRecording = true;
+    btn.classList.add('rec');
+    txtEl.textContent = T.voiceBtnStop;
+    transcript.textContent = '...';
+
+    STATE.voiceEngine.onTranscript = (txt) => { transcript.textContent = txt; };
+    STATE.voiceEngine.listen().then(({transcript: t}) => {
+      transcript.textContent = t || '';
+    }).catch(() => {
+      transcript.textContent = STATE.lang === 'en'
+        ? '(Demo: "My wheat crop was flooded for 3 days in 2 bigha area")'
+        : '(Demo: "मेरी गेहूं की फसल 2 बीघे में बाढ़ से नष्ट हो गई")';
+    }).finally(() => {
+      STATE.isRecording = false;
+      btn.classList.remove('rec');
+      txtEl.textContent = T.voiceBtnText;
+      STATE.voiceEngine.onTranscript = (txt, isFinal) => VoiceUI.showTranscript(txt, isFinal);
+    });
+  } else {
+    STATE.voiceEngine.stop();
+  }
+}
+
+/* ════════════════════════════════════════════════
+   VOICE COMMAND HANDLER
+════════════════════════════════════════════════ */
+function handleVoiceCommand(cmd, raw) {
+  if (!cmd) return;
+  console.log(`[Voice] Command: ${cmd}, Raw: "${raw}"`);
+  const nav = {
+    go_home:     () => goTo('s-home'),
+    go_report:   () => goTo('s-report'),
+    go_claims:   () => goTo('s-claims'),
+    go_advisory: () => goTo('s-advisory'),
+    go_register: () => goTo('s-register'),
+    go_satellite:() => goTo('s-satellite'),
+    go_helpline: () => goTo('s-helpline'),
+    go_back:     () => goBack(),
+    lang_hindi:  () => { selectLang('hi'); showToast('🇮🇳 हिंदी'); },
+    lang_english:() => { selectLang('en'); showToast('🌐 English'); },
+    help:        () => STATE.voiceEngine.speak('help'),
+    next_step:   () => {
+      const m = STATE.screen === 's-report';
+      if (m) {
+        const active = document.querySelector('.rstep.active');
+        const n = active ? parseInt(active.id.split('-')[2]) : 1;
+        if (n < 4) reportStep(n + 1);
+      }
+    },
+    take_photo: () => document.getElementById('photoInput').click(),
+    submit:     () => submitReport(),
+  };
+  // Crop select
+  if (cmd.startsWith('select_')) {
+    const key = cmd.replace('select_', '');
+    const idx = CROPS_UI.findIndex(c => c.key === key);
+    if (idx !== -1) selectCrop('cropGrid', idx, key);
+    return;
+  }
+  // Cause select
+  if (cmd.startsWith('cause_')) {
+    const key = cmd.replace('cause_', '');
+    const idx = CAUSES_UI.findIndex(c => c.key === key);
+    if (idx !== -1) selectCause(idx, key);
+    return;
+  }
+  if (nav[cmd]) nav[cmd]();
+}
+
+/* ════════════════════════════════════════════════
+   UPDATE ALL MIC BUTTON STATES
+════════════════════════════════════════════════ */
+function updateAllMicButtons(state) {
+  ['homeMic','reportMic'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    const span = btn.querySelector('.mic-icon');
+    if (state === 'listening') {
+      btn.classList.add('listening');
+      if (span) span.textContent = '🔴';
+    } else if (state === 'speaking') {
+      btn.classList.remove('listening');
+      if (span) span.textContent = '🔊';
+    } else {
+      btn.classList.remove('listening');
+      if (span) span.textContent = '🎤';
+    }
+  });
+}
+
+/* ════════════════════════════════════════════════
+   SEASON TOGGLE & CROP REGISTRATION
+════════════════════════════════════════════════ */
+function selectSeason(season, el) {
+  STATE.selectedSeason = season;
+  document.querySelectorAll('.season-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function registerCrop() {
+  const date   = document.getElementById('sowingDate').value;
+  const amount = document.getElementById('sumInsured').value;
+  const name   = document.getElementById('farmerName').value;
+  if (!date || !amount || !name) {
+    showToast(STATE.lang === 'en' ? '⚠️ Please fill all fields' : '⚠️ सभी जानकारी भरें');
+    return;
+  }
+  showToast(STATE.lang === 'en' ? '✅ Crop registered successfully!' : '✅ फसल सफलतापूर्वक दर्ज हो गई!');
+  STATE.voiceEngine.speak('claim_filed', ['REG-' + Math.floor(Math.random()*9000+1000)]).catch(()=>{});
+  setTimeout(() => goTo('s-home'), 2000);
+}
+
+/* ════════════════════════════════════════════════
+   SATELLITE TAB SWITCH
+════════════════════════════════════════════════ */
+function switchSatTab(type, el) {
+  document.querySelectorAll('.sat-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const grad = document.getElementById('satGrad');
+  grad.className = 'sat-grad ' + type;
+  const T = TR[STATE.lang] || TR.hi;
+  const labels = {
+    ndvi: STATE.lang === 'en' ? 'NDVI – Crop Health Map'          : 'NDVI – फसल स्वास्थ्य मानचित्र',
+    rgb:  STATE.lang === 'en' ? 'RGB – True Colour Image'          : 'RGB – वास्तविक रंग छवि',
+    sar:  STATE.lang === 'en' ? 'SAR – Radar Image (Flood Detect)'  : 'SAR – राडार छवि (बाढ़ पहचान)',
+  };
+  const lbl = document.getElementById('satMapLabel');
+  if (lbl) lbl.textContent = labels[type] || '';
+}
+
+/* ════════════════════════════════════════════════
+   TOAST & UTILITIES
+════════════════════════════════════════════════ */
+function showToast(msg, duration = 2400) {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.setAttribute('role', 'alert');
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), duration);
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+</script>
+</body>
+</html>
